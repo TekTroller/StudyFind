@@ -3,17 +3,15 @@ import { View } from "react-native";
 import Login from "./screens/Login";
 import { useState } from "react";
 
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+
 const App = () => {
-  const [loginEmail, setLoginEmail] = useState("");
-
-  const enterEmail = (enteredText) => {
-    setLoginEmail(enteredText);
-  };
-
   return (
-    <View>
-      <Login title={"Login"} loginEmail={loginEmail} enterEmail={enterEmail} />
-    </View>
+    <KeyboardAwareScrollView style={{ flex: 1 }}>
+      <View>
+        <Login title={"Login"} />
+      </View>
+    </KeyboardAwareScrollView>
   );
 };
 

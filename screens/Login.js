@@ -1,4 +1,5 @@
-import React from "react";
+import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -11,39 +12,59 @@ import {
 import Header from "../components/Header";
 import TopNavigation from "../components/TopNavigation";
 
-const BLUE = "#2C98F0";
 const GRAY = ("#ffffff", 42);
 
 const Login = (props) => {
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const [enteredPassword, setEnteredPassword] = useState("");
+
+  const enterEmail = (enteredText) => {
+    setEnteredEmail(enteredText);
+  };
+
+  const enterPassword = (enteredText) => {
+    setEnteredPassword(enteredText);
+  };
+
+  const logIn = () => {
+    console.log("clicked");
+  };
+
   return (
     <View style={styles.container}>
-      <Header title={props.title} />
-      <TopNavigation />
+      <View style={styles.top_wrapper}>
+        <StatusBar backgroundColor={("black", 60)} />
+        <Header title={"Login"} />
+        <TopNavigation />
+      </View>
       <Image
         source={require("../assets/client-logo.png")}
-        style={styles.logo}
+        style={styles.image}
       />
-      <TextInput />
-      <TextInput
-        nativeID="user"
-        textAlign="left"
-        placeholder="Email/Phone"
-        sectionColor={"#2C98F0"}
-        underlineColorAndroid={GRAY}
-        style={styles.user}
-        onChangeText={props.enterEmail}
-        value={props.loginEmail}
-      />
-      <TextInput
-        nativeID="user"
-        textAlign="left"
-        placeholder="Password"
-        sectionColor={"#2C98F0"}
-        underlineColorAndroid={GRAY}
-        style={styles.passsword}
-      />
-      <TouchableOpacity style={styles.login}>
-        <Text style={styles.title}>LOGIN</Text>
+      <View style={styles.input_wrapper}>
+        <TextInput
+          nativeID="user"
+          textAlign="left"
+          placeholder="Email/Phone"
+          sectionColor={"#2C98F0"}
+          underlineColorAndroid={GRAY}
+          style={styles.input}
+          onChangeText={enterEmail}
+          value={enteredEmail}
+        />
+        <TextInput
+          nativeID="password"
+          textAlign="left"
+          placeholder="Password"
+          sectionColor={"#2C98F0"}
+          underlineColorAndroid={GRAY}
+          style={styles.input}
+          onChangeText={enterPassword}
+          value={"*".repeat(enteredPassword.length)}
+        />
+      </View>
+      <TouchableOpacity style={styles.button} onPress={logIn}>
+        <Text style={styles.button_login}>LOGIN</Text>
       </TouchableOpacity>
     </View>
   );
@@ -51,53 +72,50 @@ const Login = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     flex: 1,
+    alignItems: "center",
   },
 
-  logo: {
+  top_wrapper: {
+    width: "100%",
+    height: 160,
+  },
+
+  image: {
     width: 244,
     height: 75,
     alignSelf: "center",
-    top: 80,
+    marginTop: 80,
   },
 
-  user: {
+  input_wrapper: {
+    width: "100%",
+    height: 150,
+    marginTop: 20,
+  },
+
+  input: {
     width: 328,
     height: 45,
     alignSelf: "center",
-    top: 100,
-    fontSize: 16,
-    fontFamily: "Roboto",
-    paddingLeft: 6,
+    marginTop: 20,
   },
 
-  passsword: {
-    width: 328,
-    height: 45,
-    alignSelf: "center",
-    top: 140,
-    fontSize: 16,
-    fontFamily: "Roboto",
-    paddingLeft: 6,
-  },
-
-  login: {
-    top: 190,
-    alignItems: "center",
+  button: {
     backgroundColor: "#23395D",
-    width: 320,
-    height: 53,
     alignSelf: "center",
+    marginTop: 50,
+    width: 300,
+    height: 50,
+    alignContent: "center",
   },
 
-  title: {
+  button_login: {
     fontFamily: "Roboto",
-    fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 20,
     color: "white",
     alignSelf: "center",
-    top: 16,
+    marginTop: 10,
   },
 });
 
