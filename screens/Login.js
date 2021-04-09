@@ -7,8 +7,9 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import TopBar from "../components/TopBar";
-import TopNagation from "../components/TopNavigation";
+
+import Header from "../components/Header";
+import TopNavigation from "../components/TopNavigation";
 
 const BLUE = "#2C98F0";
 const GRAY = ("#ffffff", 42);
@@ -16,12 +17,13 @@ const GRAY = ("#ffffff", 42);
 const Login = (props) => {
   return (
     <View style={styles.container}>
-      <TopBar title={props.title} />
-      <TopNagation />
+      <Header title={props.title} />
+      <TopNavigation />
       <Image
         source={require("../assets/client-logo.png")}
         style={styles.logo}
       />
+      <TextInput />
       <TextInput
         nativeID="user"
         textAlign="left"
@@ -29,6 +31,8 @@ const Login = (props) => {
         sectionColor={"#2C98F0"}
         underlineColorAndroid={GRAY}
         style={styles.user}
+        onChangeText={props.enterEmail}
+        value={props.loginEmail}
       />
       <TextInput
         nativeID="user"
@@ -48,6 +52,7 @@ const Login = (props) => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
+    flex: 1,
   },
 
   logo: {

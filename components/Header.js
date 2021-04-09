@@ -1,27 +1,29 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-const TopBar = (props) => {
+const Header = (props) => {
   return (
-    <View style={styles.topbar}>
+    <View style={styles.header}>
       <Text style={styles.title}>{props.title}</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  topbar: {
+  header: {
+    width: "100%",
     backgroundColor: "#23395D",
     height: 70,
+    justifyContent: "center",
   },
 
   title: {
     fontFamily: "Roboto",
     fontSize: 24,
     color: "white",
+    top: 10,
     paddingLeft: 20,
-    paddingTop: 20,
   },
 });
 
-export default TopBar;
+export default Header;

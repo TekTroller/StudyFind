@@ -1,11 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
-import Login from "./pages/Login";
+import { View } from "react-native";
+import Login from "./screens/Login";
+import { useState } from "react";
 
 const App = () => {
+  const [loginEmail, setLoginEmail] = useState("");
+
+  const enterEmail = (enteredText) => {
+    setLoginEmail(enteredText);
+  };
+
   return (
     <View>
-      <Login title={"Login"} />
+      <Login title={"Login"} loginEmail={loginEmail} enterEmail={enterEmail} />
     </View>
   );
 };
