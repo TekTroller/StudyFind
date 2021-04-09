@@ -12,8 +12,8 @@ const Header = (props) => {
 const styles = StyleSheet.create({
   header: {
     width: "100%",
+    height: 94,
     backgroundColor: "#23395D",
-    height: 70,
     justifyContent: "center",
   },
 
@@ -21,8 +21,8 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontSize: 24,
     color: "white",
-    top: 10,
     paddingLeft: 20,
+    top: 10,
   },
 });
 
