@@ -6,13 +6,22 @@ from EmailSender import EmailServer
 
 app = FastAPI()
 email_server = EmailServer()
-email_code_db = {}
+email_code_map = {}
+fake_password_db = {}
 
-class UserEmail(BaseModel):
+class RequestCodeData(BaseModel):
     email: str
 
-@app.post('/verification/{email}')
-def verification(user_email: UserEmail):
+class VerificationData(BaseModel):
+    email: str
+    code: int
+    password: str
+
+@app.post('/send_code/')
+def request_code(data: RequestCodeData):
+    if data.email in fake_password_db:
+        return {'Email already registered'}
+
     code = randint(100000,999999)
     message = 'Your verification code is: ' + str(code)
     message += """\n\nPLEASE DO NOT REPLY TO THIS EMAIL.\n\n
@@ -23,15 +32,27 @@ def verification(user_email: UserEmail):
     it, is strictly prohibited."""
 
     #Use email server to send code to the email address
-    email_server.send_code(user_email.email, code, message)
+    email_server.send_code(data.email, code, message)
 
     #Add the email-code pair to a dictionary
-    email_code_db[data.email] = code
+    email_code_map[data.email] = code
 
     #Schedule a function to delete this email-code pair after a certain time (i.e. 60 seconds)
     #To be implemented
 
-    return {'data':{'mail':user_email.email, 'code': code, 'email_code_db': email_code_db}}
+    return {'data':{'mail':data.email, 'code': code, 'email_code_map': email_code_map}}
+
+@app.post('/verification/')
+def verification(data: VerificationData):
+    if data.email not in email_code_map.keys():
+        return {'Email not found'}
+    
+    if data.code == email_code_map[data.email]:
+        fake_password_db[data.email] = data.password
+        return {'data':{'fake_password_db': fake_password_db}}
+    else:
+        return {'Wrong code'}
+
 
 if __name__ == '__main__':
     system("uvicorn App:app --reload")
