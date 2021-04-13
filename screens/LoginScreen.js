@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { colors } from "react-native-elements";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 import Colors from "../assets/Colors";
@@ -65,6 +66,18 @@ const LoginScreen = (props) => {
         <TouchableOpacity style={styles.button} onPress={logIn}>
           <Text style={styles.button_login}>LOGIN</Text>
         </TouchableOpacity>
+        <View style={styles.create_account}>
+          <Text>New user? </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate({ routeName: "CreateAccount" });
+            }}
+          >
+            <Text style={{ color: Colors.studyFindBlue }}>
+              Create an account
+            </Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAwareScrollView>
     </View>
   );
@@ -121,6 +134,13 @@ const styles = StyleSheet.create({
     color: "white",
     alignSelf: "center",
     marginTop: 10,
+  },
+
+  create_account: {
+    flexDirection: "row",
+    //width: 246,
+    alignSelf: "center",
+    alignContent: "center",
   },
 });
 
