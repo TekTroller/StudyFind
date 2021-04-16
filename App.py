@@ -3,6 +3,8 @@ from random import randint
 from os import system
 from pydantic import BaseModel
 from EmailSender import EmailServer
+import time
+import threading
 
 app = FastAPI()
 email_server = EmailServer()
@@ -39,6 +41,9 @@ def request_code(data: RequestCodeData):
 
     #Schedule a function to delete this email-code pair after a certain time (i.e. 60 seconds)
     #To be implemented
+    print(data.email)
+    auto_delete_thread = threading.Thread(target=scheduledelete, args=(data.email,))
+    auto_delete_thread.start()
 
     return {'data':{'mail':data.email, 'code': code, 'email_code_map': email_code_map}}
 
@@ -52,6 +57,12 @@ def verification(data: VerificationData):
         return {'data':{'fake_password_db': fake_password_db}}
     else:
         return {'Wrong code'}
+
+
+def scheduledelete(email:str):
+    time.sleep(5)
+    email_code_map.pop(email, None)
+    print("Email deleted: " + email)
 
 
 if __name__ == '__main__':
