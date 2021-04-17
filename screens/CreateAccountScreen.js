@@ -17,7 +17,7 @@ const CreateAccountScreen = (props) => {
           style={styles.image}
         />
         {/* conbobox here --Liang */}
-        <Picker style={{padding = 50 }}
+        <Picker style={{padding: 50 }}
           selectedValue={selectedValue}
           style={{ height: 50, width: 300}}
           onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}>
