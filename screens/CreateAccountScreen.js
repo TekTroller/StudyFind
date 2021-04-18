@@ -22,21 +22,87 @@ const CreateAccountScreen = (props) => {
   const [confirmedPassword, setConfirmedPassword] = useState("");
   const [verification, setVerification] = useState("");
 
+  const [codeSent, setCodeSent] = useState(false);
+  const [valid, setValid] = useState(false);
+
   const enterEmail = (enteredText) => {
     setEnteredEmail(enteredText);
+    if (
+      enteredEmail.includes("@") &&
+      enteredEmail.includes(".") &&
+      enteredPassword.length >= 8 &&
+      confirmedPassword == enteredPassword &&
+      verification.length >= 6
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
   };
 
   const enterPassword = (enteredText) => {
     setEnteredPassword(enteredText);
+    if (
+      enteredEmail.includes("@") &&
+      enteredEmail.includes(".") &&
+      enteredText.length >= 8 &&
+      confirmedPassword == enteredPassword &&
+      verification.length >= 6
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
   };
 
   const enterConfirmation = (enteredText) => {
     setConfirmedPassword(enteredText);
+    if (
+      enteredEmail.includes("@") &&
+      enteredEmail.includes(".") &&
+      enteredPassword.length >= 8 &&
+      confirmedPassword == enteredPassword &&
+      verification.length >= 6
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
   };
 
   const enterVerification = (enteredText) => {
     setVerification(enteredText);
+    if (
+      enteredEmail.includes("@") &&
+      enteredEmail.includes(".") &&
+      enteredPassword.length >= 8 &&
+      confirmedPassword == enteredPassword &&
+      enteredText.length >= 6
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
   };
+
+  const sendCode = () => {
+    setCodeSent(true);
+  };
+
+  const register = () => {
+    if (valid) {
+      props.navigation.navigate({ routeName: "Success" });
+    }
+  };
+
+  // const errorMessage = null;
+  // if (!enteredEmail.includes("@") && !enteredEmail.includes(".")) {
+  //   errorMessage = "Invalid email";
+  // } else if (!enteredPassword.length >= 8) {
+  //   errorMessage = "Password needs contain at least 8 characters";
+  // } else if (confirmedPassword != enteredPassword) {
+  //   errorMessage = "Confirmation password does not match entered password"
+  // };
 
   return (
     <View style={styles.container}>
@@ -71,7 +137,7 @@ const CreateAccountScreen = (props) => {
           <TextInput
             nativeID="password"
             textAlign="left"
-            placeholder="Password"
+            placeholder="Create Password   (at least 8 characters)"
             sectionColor={"#2C98F0"}
             underlineColorAndroid={GRAY}
             style={styles.input}
@@ -99,12 +165,20 @@ const CreateAccountScreen = (props) => {
               onChangeText={enterVerification}
               value={verification}
             />
-            <TouchableOpacity style={styles.send_code_button}>
-              <Text style={styles.send_code_text}>SEND CODE</Text>
+            <TouchableOpacity
+              style={codeSent ? styles.resend_button : styles.send_code_button}
+              onPress={sendCode}
+            >
+              <Text style={styles.send_code_text}>
+                {codeSent ? "RESEND" : "SEND CODE"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={valid ? styles.button : styles.button_inactive}
+          onPress={register}
+        >
           <Text style={styles.button_register}>REGISTER</Text>
         </TouchableOpacity>
         <View style={styles.login}>
@@ -186,7 +260,16 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#23395D",
+    backgroundColor: Colors.studyFindDarkBlue,
+    alignSelf: "center",
+    marginTop: 20,
+    width: 300,
+    height: 50,
+    alignContent: "center",
+  },
+
+  button_inactive: {
+    backgroundColor: GRAY,
     alignSelf: "center",
     marginTop: 20,
     width: 300,
@@ -209,7 +292,15 @@ const styles = StyleSheet.create({
   },
 
   send_code_button: {
-    backgroundColor: "#23395D",
+    backgroundColor: Colors.studyFindDarkBlue,
+    width: 100,
+    height: 33,
+    alignContent: "center",
+    marginRight: 14,
+  },
+
+  resend_button: {
+    backgroundColor: GRAY,
     width: 100,
     height: 33,
     alignContent: "center",

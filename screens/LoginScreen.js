@@ -18,17 +18,39 @@ const GRAY = Colors.studyFindGray;
 const LoginScreen = (props) => {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [valid, setValid] = useState(false);
 
   const enterEmail = (enteredText) => {
     setEnteredEmail(enteredText);
+    if (
+      enteredEmail.includes("@") &&
+      enteredEmail.includes(".") &&
+      enteredPassword.length >= 8
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
   };
 
   const enterPassword = (enteredText) => {
     setEnteredPassword(enteredText);
+    if (
+      enteredEmail.includes("@") &&
+      enteredEmail.includes(".") &&
+      enteredText.length >= 8
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
   };
 
   const logIn = () => {
     console.log("clicked");
+    if (valid) {
+      props.navigation.navigate({ routeName: "PatientRecords" });
+    }
   };
 
   return (
@@ -62,7 +84,10 @@ const LoginScreen = (props) => {
             value={"*".repeat(enteredPassword.length)}
           />
         </View>
-        <TouchableOpacity style={styles.button} onPress={logIn}>
+        <TouchableOpacity
+          style={valid ? styles.button : styles.button_inactive}
+          onPress={logIn}
+        >
           <Text style={styles.button_login}>LOGIN</Text>
         </TouchableOpacity>
         <View style={styles.create_account}>
@@ -119,7 +144,16 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: "#23395D",
+    backgroundColor: Colors.studyFindDarkBlue,
+    alignSelf: "center",
+    marginTop: 50,
+    width: 300,
+    height: 50,
+    alignContent: "center",
+  },
+
+  button_inactive: {
+    backgroundColor: GRAY,
     alignSelf: "center",
     marginTop: 50,
     width: 300,
