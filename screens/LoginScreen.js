@@ -8,13 +8,12 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { colors } from "react-native-elements";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 import Colors from "../assets/Colors";
 import TopNavigation from "../components/TopNavigation";
 
-const GRAY = ("#ffffff", 42);
+const GRAY = Colors.studyFindGray;
 
 const LoginScreen = (props) => {
   const [enteredEmail, setEnteredEmail] = useState("");
@@ -45,7 +44,7 @@ const LoginScreen = (props) => {
           <TextInput
             nativeID="user"
             textAlign="left"
-            placeholder="Email/Phone"
+            placeholder="Email"
             sectionColor={"#2C98F0"}
             underlineColorAndroid={GRAY}
             style={styles.input}
@@ -138,7 +137,6 @@ const styles = StyleSheet.create({
 
   create_account: {
     flexDirection: "row",
-    //width: 246,
     alignSelf: "center",
     alignContent: "center",
   },
