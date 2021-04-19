@@ -37,7 +37,7 @@ ehthumbs.db
 Thumbs.db
 
 # dependencies
-/node_modules
+/frontend/node_modules
 /.pnp
 .pnp.js
 
