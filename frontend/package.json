@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-picker/picker": "^1.15.0",
+    "axios": "^0.21.1",
     "expo": "~40.0.0",
     "expo-status-bar": "~1.0.3",
     "native-base": "^2.15.2",
@@ -29,7 +30,11 @@
     "react-navigation-stack": "^2.10.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0"
+    "@babel/core": "^7.9.0",
+    "node-sass": "^5.0.0",
+    "sass": "^1.32.11",
+    "sass-loader": "^11.0.1",
+    "webpack": "^5.35.1"
   },
   "private": true
 }

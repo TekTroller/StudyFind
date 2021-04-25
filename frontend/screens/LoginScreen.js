@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -13,12 +13,24 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview"
 import Colors from "../assets/Colors";
 import TopNavigation from "../components/TopNavigation";
 
+
 const GRAY = Colors.studyFindGray;
 
 const LoginScreen = (props) => {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [valid, setValid] = useState(false);
+
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   fetch('http://localhost:8000/')
+  //     .then((response) => response.json())
+  //     .then((json) => setResults(json.message))
+  //     .catch((error) => console.error(error))
+  //     .finally(() => setLoading(false));
+  // }, []);
 
   const enterEmail = (enteredText) => {
     setEnteredEmail(enteredText);
@@ -102,6 +114,11 @@ const LoginScreen = (props) => {
             </Text>
           </TouchableOpacity>
         </View>
+        {/* <View>
+          <Text style = {{alignSelf:"center"}}>
+            {loading? "loading": results}
+          </Text>
+        </View> */}
       </KeyboardAwareScrollView>
     </View>
   );

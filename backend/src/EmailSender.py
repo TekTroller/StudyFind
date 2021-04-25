@@ -24,9 +24,3 @@ class EmailServer():
     def log_in(self):
         self.server.ehlo()
         self.server.login(self.email, self.password)
-
-'''
-if __name__ == '__main__':
-    server = EmailServer()
-    server.send_code('jlu628@gatech.edu',123456)
-'''
