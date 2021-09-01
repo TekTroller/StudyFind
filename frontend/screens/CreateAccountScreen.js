@@ -119,7 +119,7 @@ const CreateAccountScreen = (props) => {
             onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
           >
             <Picker.Item label="Patient" value="Patient" />
-            <Picker.Item label="Doctor/Researcher" value="Doctor/Researcher" />
+            <Picker.Item label="Professional" value="Professional" />
           </Picker>
         </View>
         {/* text inputs here --Xi */}
@@ -179,7 +179,7 @@ const CreateAccountScreen = (props) => {
           style={valid ? styles.button : styles.button_inactive}
           onPress={register}
         >
-          <Text style={styles.button_register}>REGISTER</Text>
+          <Text style={styles.button_register}>CREATE</Text>
         </TouchableOpacity>
         <View style={styles.login}>
           <Text>Already have an account? </Text>
@@ -224,6 +224,8 @@ const styles = StyleSheet.create({
     height: 50,
     width: 328,
     alignSelf: "center",
+    paddingLeft: 8,
+    borderRadius: 4,
     borderTopWidth: 1,
     borderLeftWidth: 2,
     borderRightWidth: 2,
@@ -263,7 +265,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.studyFindDarkBlue,
     alignSelf: "center",
     marginTop: 20,
-    width: 300,
+    borderRadius: 4,
+    width: 270,
     height: 50,
     alignContent: "center",
   },
@@ -272,7 +275,8 @@ const styles = StyleSheet.create({
     backgroundColor: GRAY,
     alignSelf: "center",
     marginTop: 20,
-    width: 300,
+    borderRadius: 4,
+    width: 270,
     height: 50,
     alignContent: "center",
   },
@@ -293,6 +297,7 @@ const styles = StyleSheet.create({
 
   send_code_button: {
     backgroundColor: Colors.studyFindDarkBlue,
+    borderRadius: 4,
     width: 100,
     height: 33,
     alignContent: "center",

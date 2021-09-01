@@ -1,110 +1,151 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
   Image,
   TextInput,
   TouchableOpacity,
+  TouchableNativeFeedback,
+  TouchableWithoutFeedback,
+  Platform,
   Text,
+  Keyboard,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../assets/Colors";
-import TopNavigation from "../components/TopNavigation";
-
+import AccountType from "../components/AccountType";
+import {
+  enterEmail,
+  enterPassword,
+  switchAccountType,
+  setValidity,
+} from "../store/actions/auth";
 
 const GRAY = Colors.studyFindGray;
 
 const LoginScreen = (props) => {
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [valid, setValid] = useState(false);
+  const authenticationInfo = useSelector((state) => state.authentication);
 
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(true);
+  let TouchableCmp = TouchableOpacity;
+  if (Platform.OS === "android" && Platform.Version >= 21) {
+    TouchableCmp = TouchableNativeFeedback;
+  }
 
-  // useEffect(() => {
-  //   fetch('http://localhost:8000/')
-  //     .then((response) => response.json())
-  //     .then((json) => setResults(json.message))
-  //     .catch((error) => console.error(error))
-  //     .finally(() => setLoading(false));
-  // }, []);
+  const dispatch = useDispatch();
 
-  const enterEmail = (enteredText) => {
-    setEnteredEmail(enteredText);
+  const enterEmailHandler = (enteredText) => {
+    dispatch(enterEmail(enteredText));
+
+    // setEnteredEmail(enteredText);
     if (
-      enteredEmail.includes("@") &&
-      enteredEmail.includes(".") &&
-      enteredPassword.length >= 8
+      authenticationInfo.email.includes("@") &&
+      authenticationInfo.email.includes(".") &&
+      authenticationInfo.password.length >= 8
     ) {
-      setValid(true);
+      dispatch(setValidity(true));
     } else {
-      setValid(false);
+      dispatch(setValidity(false));
     }
   };
 
-  const enterPassword = (enteredText) => {
-    setEnteredPassword(enteredText);
+  const enterPasswordHandler = (enteredText) => {
+    dispatch(enterPassword(enteredText));
+
+    //setEnteredPassword(enteredText);
     if (
-      enteredEmail.includes("@") &&
-      enteredEmail.includes(".") &&
-      enteredText.length >= 8
+      authenticationInfo.email.includes("@") &&
+      authenticationInfo.email.includes(".") &&
+      authenticationInfo.password.length >= 8
     ) {
-      setValid(true);
+      dispatch(setValidity(true));
     } else {
-      setValid(false);
+      dispatch(setValidity(false));
     }
+  };
+
+  const setPatientAccountHandler = () => {
+    if (authenticationInfo.accountType === "Professional") {
+      dispatch(enterEmail(""));
+      dispatch(enterPassword(""));
+      dispatch(setValidity(false));
+    }
+    dispatch(switchAccountType("Patient"));
+  };
+
+  const setProfessionalAccountHandler = () => {
+    if (authenticationInfo.accountType === "Patient") {
+      dispatch(enterEmail(""));
+      dispatch(enterPassword(""));
+      dispatch(setValidity(false));
+    }
+    dispatch(switchAccountType("Patient"));
+    dispatch(switchAccountType("Professional"));
   };
 
   const logIn = () => {
-    console.log("clicked");
-    if (valid) {
+    if (authenticationInfo.validAccount) {
       props.navigation.navigate({ routeName: "PatientRecords" });
     }
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor={("black", 60)} />
-      <TopNavigation style={{ width: "100" }} />
-      <KeyboardAwareScrollView style={{ flex: 1, width: "100%" }}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.inner}>
+        <StatusBar backgroundColor={("black", 60)} />
         <Image
           source={require("../assets/client-logo.png")}
           style={styles.image}
+        />
+        <AccountType
+          accountType={authenticationInfo.accountType}
+          setPatientAccountHandler={setPatientAccountHandler}
+          setProfessionalAccountHandler={setProfessionalAccountHandler}
         />
         <View style={styles.input_wrapper}>
           <TextInput
             nativeID="user"
             textAlign="left"
-            placeholder="Email"
-            sectionColor={"#2C98F0"}
+            placeholder={
+              authenticationInfo.accountType === "Patient"
+                ? "Email"
+                : "Institute Email"
+            }
+            sectionColor={Colors.studyFindDarkBlue}
             underlineColorAndroid={GRAY}
             style={styles.input}
-            onChangeText={enterEmail}
-            value={enteredEmail}
+            onChangeText={enterEmailHandler}
+            value={authenticationInfo.email}
           />
           <TextInput
             nativeID="password"
             textAlign="left"
             placeholder="Password"
-            sectionColor={"#2C98F0"}
+            sectionColor={Colors.studyFindDarkBlue}
             underlineColorAndroid={GRAY}
             style={styles.input}
-            onChangeText={enterPassword}
-            value={"*".repeat(enteredPassword.length)}
+            onChangeText={enterPasswordHandler}
+            value={"*".repeat(authenticationInfo.password.length)}
           />
         </View>
         <TouchableOpacity
-          style={valid ? styles.button : styles.button_inactive}
+          style={
+            authenticationInfo.validAccount
+              ? styles.button
+              : styles.button_inactive
+          }
           onPress={logIn}
         >
           <Text style={styles.button_login}>LOGIN</Text>
         </TouchableOpacity>
         <View style={styles.create_account}>
           <Text>New user? </Text>
-          <TouchableOpacity
+          <TouchableCmp
             onPress={() => {
               props.navigation.navigate({ routeName: "CreateAccount" });
             }}
@@ -112,15 +153,10 @@ const LoginScreen = (props) => {
             <Text style={{ color: Colors.studyFindBlue }}>
               Create an account
             </Text>
-          </TouchableOpacity>
+          </TouchableCmp>
         </View>
-        {/* <View>
-          <Text style = {{alignSelf:"center"}}>
-            {loading? "loading": results}
-          </Text>
-        </View> */}
-      </KeyboardAwareScrollView>
-    </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -136,25 +172,29 @@ LoginScreen.navigationOptions = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  inner: {
+    flex: 1,
     alignItems: "center",
     backgroundColor: "white",
+    //justifyContent: "center",
   },
 
   image: {
-    width: 244,
+    width: 240,
     height: 75,
     alignSelf: "center",
-    marginTop: 80,
+    marginTop: 30,
+    marginBottom: 30,
   },
 
   input_wrapper: {
-    width: "100%",
+    width: "80%",
     height: 150,
-    marginTop: 20,
   },
 
   input: {
-    width: 328,
+    width: 300,
     height: 45,
     alignSelf: "center",
     marginTop: 20,
@@ -163,8 +203,9 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: Colors.studyFindDarkBlue,
     alignSelf: "center",
-    marginTop: 50,
-    width: 300,
+    marginTop: 20,
+    borderRadius: 4,
+    width: 270,
     height: 50,
     alignContent: "center",
   },
@@ -172,8 +213,9 @@ const styles = StyleSheet.create({
   button_inactive: {
     backgroundColor: GRAY,
     alignSelf: "center",
-    marginTop: 50,
-    width: 300,
+    marginTop: 20,
+    borderRadius: 4,
+    width: 270,
     height: 50,
     alignContent: "center",
   },
@@ -190,6 +232,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     alignContent: "center",
+    marginBottom: 170,
   },
 });
 
