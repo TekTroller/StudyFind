@@ -26,10 +26,15 @@
     "react-native-vector-icons": "^8.1.0",
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.4",
-    "react-navigation-stack": "^2.10.4"
+    "react-navigation-stack": "^2.10.4",
+    "ganache-cli": "^6.12.2",
+    "solc": "^0.4.17",
+    "web3": "^1.3.5"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.0"
+    "@babel/core": "^7.9.0",
+    "mocha": "^8.3.2",
+    "truffle-hdwallet-provider": "^0.0.3"
   },
   "private": true
 }
