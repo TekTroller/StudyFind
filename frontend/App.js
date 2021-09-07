@@ -5,11 +5,13 @@ import { Provider } from "react-redux";
 
 import AppNavigator from "./navigation/AppNavigator";
 import authReducer from "./store/reducers/auth";
+import registerReducer from "./store/reducers/register";
 
 enableScreens();
 
 const rootReducer = combineReducers({
   authentication: authReducer,
+  registration: registerReducer,
 });
 
 const store = createStore(rootReducer);

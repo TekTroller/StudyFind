@@ -36,51 +36,42 @@ const LoginScreen = (props) => {
   const dispatch = useDispatch();
 
   const enterEmailHandler = (enteredText) => {
-    dispatch(enterEmail(enteredText));
-
-    // setEnteredEmail(enteredText);
-    if (
-      authenticationInfo.email.includes("@") &&
-      authenticationInfo.email.includes(".") &&
-      authenticationInfo.password.length >= 8
-    ) {
-      dispatch(setValidity(true));
-    } else {
-      dispatch(setValidity(false));
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let isValid = true;
+    if (enteredText.trim().length === 0) {
+      isValid = false;
     }
+    if (!emailRegex.test(enteredText.toLowerCase())) {
+      isValid = false;
+    }
+    if (authenticationInfo.password.length < 8) {
+      isValid = false;
+    }
+    dispatch(enterEmail(enteredText));
+    dispatch(setValidity(isValid));
   };
 
   const enterPasswordHandler = (enteredText) => {
-    dispatch(enterPassword(enteredText));
-
-    //setEnteredPassword(enteredText);
-    if (
-      authenticationInfo.email.includes("@") &&
-      authenticationInfo.email.includes(".") &&
-      authenticationInfo.password.length >= 8
-    ) {
-      dispatch(setValidity(true));
-    } else {
-      dispatch(setValidity(false));
+    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let isValid = true;
+    if (authenticationInfo.email.trim().length === 0) {
+      isValid = false;
     }
+    if (!emailRegex.test(authenticationInfo.email.toLowerCase())) {
+      isValid = false;
+    }
+    if (enteredText.length < 8) {
+      isValid = false;
+    }
+    dispatch(enterPassword(enteredText));
+    dispatch(setValidity(enteredText.length >= 8));
   };
 
   const setPatientAccountHandler = () => {
-    if (authenticationInfo.accountType === "Professional") {
-      dispatch(enterEmail(""));
-      dispatch(enterPassword(""));
-      dispatch(setValidity(false));
-    }
     dispatch(switchAccountType("Patient"));
   };
 
   const setProfessionalAccountHandler = () => {
-    if (authenticationInfo.accountType === "Patient") {
-      dispatch(enterEmail(""));
-      dispatch(enterPassword(""));
-      dispatch(setValidity(false));
-    }
-    dispatch(switchAccountType("Patient"));
     dispatch(switchAccountType("Professional"));
   };
 
@@ -89,6 +80,18 @@ const LoginScreen = (props) => {
       props.navigation.navigate({ routeName: "PatientRecords" });
     }
   };
+
+  let error = null;
+  if (
+    (authenticationInfo.email !== "" || authenticationInfo.password !== "") &&
+    !authenticationInfo.validAccount
+  ) {
+    error = (
+      <Text style={{ color: "red", marginLeft: "2%", fontSize: 10 }}>
+        Invalid Email or Password
+      </Text>
+    );
+  }
 
   return (
     <TouchableWithoutFeedback
@@ -119,8 +122,9 @@ const LoginScreen = (props) => {
             sectionColor={Colors.studyFindDarkBlue}
             underlineColorAndroid={GRAY}
             style={styles.input}
-            onChangeText={enterEmailHandler}
+            keyboardType={"email-address"}
             value={authenticationInfo.email}
+            onChangeText={enterEmailHandler}
           />
           <TextInput
             nativeID="password"
@@ -130,8 +134,9 @@ const LoginScreen = (props) => {
             underlineColorAndroid={GRAY}
             style={styles.input}
             onChangeText={enterPasswordHandler}
-            value={"*".repeat(authenticationInfo.password.length)}
+            secureTextEntry={true}
           />
+          {error}
         </View>
         <TouchableOpacity
           style={
@@ -191,6 +196,7 @@ const styles = StyleSheet.create({
   input_wrapper: {
     width: "80%",
     height: 150,
+    marginTop: 20,
   },
 
   input: {
@@ -208,6 +214,7 @@ const styles = StyleSheet.create({
     width: 270,
     height: 50,
     alignContent: "center",
+    elevation: 2,
   },
 
   button_inactive: {

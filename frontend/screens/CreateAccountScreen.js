@@ -7,10 +7,14 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Keyboard,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+
 import { Picker } from "@react-native-picker/picker";
 
+import AccountType from "../components/AccountType";
 import Colors from "../assets/Colors";
 
 const GRAY = Colors.studyFindGray;
@@ -95,24 +99,16 @@ const CreateAccountScreen = (props) => {
     }
   };
 
-  // const errorMessage = null;
-  // if (!enteredEmail.includes("@") && !enteredEmail.includes(".")) {
-  //   errorMessage = "Invalid email";
-  // } else if (!enteredPassword.length >= 8) {
-  //   errorMessage = "Password needs contain at least 8 characters";
-  // } else if (confirmedPassword != enteredPassword) {
-  //   errorMessage = "Confirmation password does not match entered password"
-  // };
-
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor={("black", 60)} />
-      <KeyboardAwareScrollView style={{ flex: 1, width: "100%" }}>
-        <Image
-          source={require("../assets/client-logo.png")}
-          style={styles.image}
-        />
-        <View style={styles.picker_wrapper}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss();
+      }}
+    >
+      <View style={styles.container}>
+        <StatusBar backgroundColor={("black", 60)} />
+        <KeyboardAvoidingView style={{ flex: 1, width: "100%" }}>
+          {/* <View style={styles.picker_wrapper}>
           <Picker
             style={styles.picker}
             selectedValue={role}
@@ -121,67 +117,64 @@ const CreateAccountScreen = (props) => {
             <Picker.Item label="Patient" value="Patient" />
             <Picker.Item label="Professional" value="Professional" />
           </Picker>
-        </View>
-        {/* text inputs here --Xi */}
-        <View style={styles.input_wrapper}>
-          <TextInput
-            nativeID="user"
-            textAlign="left"
-            placeholder="Email"
-            sectionColor={"#2C98F0"}
-            underlineColorAndroid={GRAY}
-            style={styles.input}
-            onChangeText={enterEmail}
-            value={enteredEmail}
-          />
-          <TextInput
-            nativeID="password"
-            textAlign="left"
-            placeholder="Create Password   (at least 8 characters)"
-            sectionColor={"#2C98F0"}
-            underlineColorAndroid={GRAY}
-            style={styles.input}
-            onChangeText={enterPassword}
-            value={"*".repeat(enteredPassword.length)}
-          />
-          <TextInput
-            nativeID="confirmation"
-            textAlign="left"
-            placeholder="Confirm Password"
-            sectionColor={"#2C98F0"}
-            underlineColorAndroid={GRAY}
-            style={styles.input}
-            onChangeText={enterConfirmation}
-            value={"*".repeat(confirmedPassword.length)}
-          />
-          <View style={styles.send_code}>
+        </View> */}
+
+          <View style={styles.input_wrapper}>
+            <AccountType accountType={"Patient"} />
             <TextInput
-              nativeID="verification"
+              nativeID="user"
               textAlign="left"
-              placeholder="Verification Code"
+              placeholder="Email"
               sectionColor={"#2C98F0"}
               underlineColorAndroid={GRAY}
-              style={styles.verification}
-              onChangeText={enterVerification}
-              value={verification}
+              style={styles.input}
+              onChangeText={enterEmail}
+              value={enteredEmail}
             />
-            <TouchableOpacity
-              style={codeSent ? styles.resend_button : styles.send_code_button}
-              onPress={sendCode}
-            >
-              <Text style={styles.send_code_text}>
-                {codeSent ? "RESEND" : "SEND CODE"}
-              </Text>
-            </TouchableOpacity>
+            <TextInput
+              nativeID="password"
+              textAlign="left"
+              placeholder="Create Password   (at least 8 characters)"
+              sectionColor={"#2C98F0"}
+              underlineColorAndroid={GRAY}
+              style={styles.input}
+              onChangeText={enterPassword}
+              value={"*".repeat(enteredPassword.length)}
+            />
+            <TextInput
+              nativeID="confirmation"
+              textAlign="left"
+              placeholder="Confirm Password"
+              sectionColor={"#2C98F0"}
+              underlineColorAndroid={GRAY}
+              style={styles.input}
+              onChangeText={enterConfirmation}
+              value={"*".repeat(confirmedPassword.length)}
+            />
+            <View style={styles.send_code}>
+              <TextInput
+                nativeID="verification"
+                textAlign="left"
+                placeholder="Verification Code"
+                sectionColor={"#2C98F0"}
+                underlineColorAndroid={GRAY}
+                style={styles.verification}
+                onChangeText={enterVerification}
+                value={verification}
+              />
+              <TouchableOpacity
+                style={
+                  codeSent ? styles.resend_button : styles.send_code_button
+                }
+                onPress={sendCode}
+              >
+                <Text style={styles.send_code_text}>
+                  {codeSent ? "RESEND" : "SEND CODE"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <TouchableOpacity
-          style={valid ? styles.button : styles.button_inactive}
-          onPress={register}
-        >
-          <Text style={styles.button_register}>CREATE</Text>
-        </TouchableOpacity>
-        <View style={styles.login}>
+          {/*<View style={styles.login}>
           <Text>Already have an account? </Text>
           <TouchableOpacity
             onPress={() => {
@@ -189,10 +182,28 @@ const CreateAccountScreen = (props) => {
             }}
           >
             <Text style={{ color: Colors.studyFindBlue }}>Login</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAwareScrollView>
-    </View>
+          </TouchableOpacity> */}
+          <View style={styles.register_wrapper}>
+            <TouchableOpacity
+              style={valid ? styles.button : styles.button_inactive}
+              onPress={register}
+            >
+              <Text style={styles.button_register}>CREATE</Text>
+            </TouchableOpacity>
+            <View style={styles.login}>
+              <Text>Already have an account? </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.navigate({ routeName: "Login" });
+                }}
+              >
+                <Text style={{ color: Colors.studyFindBlue }}>Login</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -236,29 +247,29 @@ const styles = StyleSheet.create({
     borderBottomColor: ("black", 40),
   },
 
-  picker: {
-    height: 50,
-    width: 328,
-    alignSelf: "center",
-  },
-
   input_wrapper: {
-    width: "100%",
+    width: "80%",
     height: 265,
-    marginTop: 10,
+    marginTop: 20,
+    alignSelf: "center",
   },
 
   input: {
-    width: 328,
+    width: 270,
     height: 45,
     alignSelf: "center",
-    marginTop: 17,
+    marginTop: 20,
   },
 
   verification: {
-    width: 200,
+    width: 140,
     height: 45,
     marginRight: 14,
+  },
+
+  register_wrapper: {
+    marginTop: 20,
+    height: 60,
   },
 
   button: {
