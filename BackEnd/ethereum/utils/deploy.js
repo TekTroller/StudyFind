@@ -1,11 +1,12 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const HDWalletProvider = require('truffle-hdwallet-provider');
+const WalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
-const compiledFactory = require('../builds/LoginDatabase.json');
+const LoginDatabase = require('../builds/LoginDatabase.json');
 
-const provider = new HDWalletProvider(
+
+const provider = new WalletProvider(
     'stairs basic flag mandate split marble oven cliff anxiety trap model morning',
     'https://rinkeby.infura.io/v3/f95650b8297a4bf4a2eccfddf84d5865'
 );
@@ -18,19 +19,26 @@ const deploy = async() => {
     const accounts = await web3.eth.getAccounts();
     console.log("Attempting to deploy from account " + accounts[0]);
 
-    const contract = await new web3.eth.Contract(JSON.parse(compiledFactory.interface))
-        .deploy({ data: compiledFactory.bytecode })
-        .send({ gas: '1000000', from: accounts[0] });
+    const contract = await new web3.eth.Contract(LoginDatabase.abi)
+        .deploy({ data: LoginDatabase.bytecode })
+        .send({ gas: '1000000', from: accounts[0],gasPrice: 400000000000, gasLimit: 4000000 });
 
     console.log("Contract deployed to " + contract.options.address);
-    const address = {address: contract.options.address};
+    const address = contract.options.address;
 
-    // log deployed address to json file
-    const buildpath = path.resolve(__dirname, 'build');
-    fs.removeSync(buildpath+'DeployedAddress.json');
+    // remove previous deployed contract
+    const output_target = path.resolve(__dirname, '../builds/DeployedAddress.json');
+    try{
+        fs.unlinkSync(output_target);
+    } catch(error){};
+    try{
+        fs.unlinkSync(output_target);
+    } catch(error){};
+
+    // save deployed address to json file
     fs.outputJsonSync(
-        path.resolve(buildpath, 'DeployedAddress.json'),
-        address
+        path.resolve(output_target),
+        {"LoginDatabase": address}
     );
 }
 
