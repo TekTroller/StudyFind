@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
 
   option: {
-    width: 205.5,
+    width: "50%",
     backgroundColor: "#23395D",
     alignContent: "center",
   },
