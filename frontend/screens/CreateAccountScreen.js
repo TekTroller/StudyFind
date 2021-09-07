@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  ScrollView,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
@@ -15,12 +15,13 @@ import {
 import { Picker } from "@react-native-picker/picker";
 
 import AccountType from "../components/AccountType";
+import RegisterInput from "../components/RegisterInput";
 import Colors from "../assets/Colors";
 
 const GRAY = Colors.studyFindGray;
 
 const CreateAccountScreen = (props) => {
-  const [role, setRole] = useState("Patient");
+  const [role, setRole] = useState("Male");
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [confirmedPassword, setConfirmedPassword] = useState("");
@@ -100,110 +101,107 @@ const CreateAccountScreen = (props) => {
   };
 
   return (
-    <TouchableWithoutFeedback
-      onPress={() => {
-        Keyboard.dismiss();
-      }}
-    >
-      <View style={styles.container}>
-        <StatusBar backgroundColor={("black", 60)} />
-        <KeyboardAvoidingView style={{ flex: 1, width: "100%" }}>
-          {/* <View style={styles.picker_wrapper}>
-          <Picker
-            style={styles.picker}
-            selectedValue={role}
-            onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
-          >
-            <Picker.Item label="Patient" value="Patient" />
-            <Picker.Item label="Professional" value="Professional" />
-          </Picker>
-        </View> */}
-
-          <View style={styles.input_wrapper}>
-            <AccountType accountType={"Patient"} />
-            <TextInput
-              nativeID="user"
-              textAlign="left"
-              placeholder="Email"
-              sectionColor={"#2C98F0"}
-              underlineColorAndroid={GRAY}
-              style={styles.input}
-              onChangeText={enterEmail}
-              value={enteredEmail}
-            />
-            <TextInput
-              nativeID="password"
-              textAlign="left"
-              placeholder="Create Password   (at least 8 characters)"
-              sectionColor={"#2C98F0"}
-              underlineColorAndroid={GRAY}
-              style={styles.input}
-              onChangeText={enterPassword}
-              value={"*".repeat(enteredPassword.length)}
-            />
-            <TextInput
-              nativeID="confirmation"
-              textAlign="left"
-              placeholder="Confirm Password"
-              sectionColor={"#2C98F0"}
-              underlineColorAndroid={GRAY}
-              style={styles.input}
-              onChangeText={enterConfirmation}
-              value={"*".repeat(confirmedPassword.length)}
-            />
-            <View style={styles.send_code}>
-              <TextInput
-                nativeID="verification"
-                textAlign="left"
-                placeholder="Verification Code"
-                sectionColor={"#2C98F0"}
-                underlineColorAndroid={GRAY}
-                style={styles.verification}
-                onChangeText={enterVerification}
-                value={verification}
+    <KeyboardAvoidingView style={{ flex: 1 }}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+        style={{ justifyContent: "center" }}
+      >
+        <View style={styles.container}>
+          <StatusBar backgroundColor={("black", 60)} />
+          <View style={{ justifyContent: "center" }}>
+            <View style={styles.input_wrapper}>
+              <AccountType accountType={"Patient"} />
+              <RegisterInput
+                text="e-mail"
+                placeholder=""
+                onChangeText={enterEmail}
+                value={enteredEmail}
               />
-              <TouchableOpacity
-                style={
-                  codeSent ? styles.resend_button : styles.send_code_button
-                }
-                onPress={sendCode}
-              >
-                <Text style={styles.send_code_text}>
-                  {codeSent ? "RESEND" : "SEND CODE"}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          {/*<View style={styles.login}>
-          <Text>Already have an account? </Text>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate({ routeName: "Login" });
-            }}
-          >
-            <Text style={{ color: Colors.studyFindBlue }}>Login</Text>
-          </TouchableOpacity> */}
-          <View style={styles.register_wrapper}>
-            <TouchableOpacity
-              style={valid ? styles.button : styles.button_inactive}
-              onPress={register}
-            >
-              <Text style={styles.button_register}>CREATE</Text>
-            </TouchableOpacity>
-            <View style={styles.login}>
-              <Text>Already have an account? </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  props.navigation.navigate({ routeName: "Login" });
+              <RegisterInput
+                text="password"
+                placeholder="(at least 8 characters)"
+                onChangeText={enterPassword}
+                value={enteredPassword}
+                password
+              />
+              <RegisterInput
+                text="confirm password"
+                placeholder="(at least 8 characters)"
+                onChangeText={enterConfirmation}
+                value={verification}
+                password
+              />
+              <RegisterInput text="full name" placeholder="" />
+              <RegisterInput text="birthday" placeholder="yyyy/mm/dd" />
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: "gray",
+                  marginTop: 10,
+                  alignSelf: "center",
+                  width: 270,
                 }}
               >
-                <Text style={{ color: Colors.studyFindBlue }}>Login</Text>
+                gender
+              </Text>
+              <View style={styles.picker_wrapper}>
+                <Picker
+                  // style={styles.picker}
+                  selectedValue={role}
+                  onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
+                >
+                  <Picker.Item label="Male" value="Male" />
+                  <Picker.Item label="Female" value="Female" />
+                  <Picker.Item label="Other" value="Other" />
+                </Picker>
+              </View>
+              <View style={styles.send_code}>
+                <TextInput
+                  nativeID="verification"
+                  textAlign="left"
+                  placeholder="Verification Code"
+                  sectionColor={"#2C98F0"}
+                  underlineColorAndroid={GRAY}
+                  style={styles.verification}
+                  onChangeText={enterVerification}
+                  value={verification}
+                />
+                <TouchableOpacity
+                  style={
+                    codeSent ? styles.resend_button : styles.send_code_button
+                  }
+                  onPress={sendCode}
+                >
+                  <Text style={styles.send_code_text}>
+                    {codeSent ? "RESEND" : "SEND CODE"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.register_wrapper}>
+              <TouchableOpacity
+                style={valid ? styles.button : styles.button_inactive}
+                onPress={register}
+              >
+                <Text style={styles.button_register}>CREATE</Text>
               </TouchableOpacity>
+              <View style={styles.login}>
+                <Text>Already have an account? </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    props.navigation.navigate({ routeName: "Login" });
+                  }}
+                >
+                  <Text style={{ color: Colors.studyFindBlue }}>Login</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </KeyboardAvoidingView>
-      </View>
-    </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -223,17 +221,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 
-  image: {
-    width: 244,
-    height: 75,
-    alignSelf: "center",
-    marginTop: 15,
-  },
+  // image: {
+  //   width: 244,
+  //   height: 75,
+  //   alignSelf: "center",
+  //   marginTop: 15,
+  // },
 
   picker_wrapper: {
-    marginTop: 30,
-    height: 50,
-    width: 328,
+    marginTop: 10,
+    height: 30,
+    width: 270,
     alignSelf: "center",
     paddingLeft: 8,
     borderRadius: 4,
@@ -248,8 +246,7 @@ const styles = StyleSheet.create({
   },
 
   input_wrapper: {
-    width: "80%",
-    height: 265,
+    //height: 265,
     marginTop: 20,
     alignSelf: "center",
   },
@@ -269,7 +266,7 @@ const styles = StyleSheet.create({
 
   register_wrapper: {
     marginTop: 20,
-    height: 60,
+    //height: 60,
   },
 
   button: {

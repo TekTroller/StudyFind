@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     flexDirection: "row",
     backgroundColor: "white",
+    marginBottom: 10,
   },
 
   option: {
