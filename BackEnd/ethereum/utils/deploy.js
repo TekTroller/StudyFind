@@ -3,7 +3,7 @@ const path = require('path');
 
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
-const compiledFactory = require('./build/CampaignFactory.json');
+const compiledFactory = require('../builds/LoginDatabase.json');
 
 const provider = new HDWalletProvider(
     'stairs basic flag mandate split marble oven cliff anxiety trap model morning',
