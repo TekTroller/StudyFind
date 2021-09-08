@@ -10,8 +10,6 @@ import {
   ENTER_INSTITUTE_REGISTER,
   ENTER_VERIFICATION_REGISTER,
   SET_VERIFICATION_REGISTER,
-  SET_VALIDITY_REGISTER,
-  SET_COMPLETENESS_REGISTER,
   RESET_REGISTER,
 } from "../actions/register";
 
@@ -26,8 +24,6 @@ const initialState = {
   gender: "",
   verification: "",
   correctVerification: "",
-  validAccount: false,
-  complete: false,
 };
 
 export default (state = initialState, action) => {
@@ -52,25 +48,8 @@ export default (state = initialState, action) => {
       return { ...state, verification: action.verification };
     case SET_VERIFICATION_REGISTER:
       return { ...state, correctVerification: action.correctVerification };
-    case SET_VALIDITY_REGISTER:
-      return { ...state, validAccount: action.validAccount };
-    case SET_COMPLETENESS_REGISTER:
-      return { ...state, complete: action.complete };
     case RESET_REGISTER:
-      return {
-        accountType: initialState.accountType,
-        email: initialState.email,
-        password: initialState.password,
-        confirmation: initialState.confirmation,
-        name: initialState.name,
-        institute: initialState.institute,
-        birthday: initialState.birthday,
-        gender: initialState.gender,
-        verification: initialState.verification,
-        correctVerification: initialState.correctVerification,
-        validAccount: initialState.validAccount,
-        complete: initialState.complete,
-      };
+      return initialState;
     default:
       return state;
   }

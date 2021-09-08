@@ -9,8 +9,6 @@ export const ENTER_BIRTHDAY_REGISTER = "ENTER_BIRTHDAY_REGISTER";
 export const ENTER_GENDER_REGISTER = "ENTER_GENDER_REGISTER";
 export const ENTER_VERIFICATION_REGISTER = "ENTER_VERIFICATION_REGISTER";
 export const SET_VERIFICATION_REGISTER = "SET_VERIFICATION_REGISTER";
-export const SET_VALIDITY_REGISTER = "SET_VALIDITY_REGISTER";
-export const SET_COMPLETENESS_REGISTER = "SET_COMPLETENESS_REGISTER";
 export const RESET_REGISTER = "RESET_REGISTER";
 
 export const enterEmail = (email) => {
@@ -57,14 +55,6 @@ export const setVerification = (correctVerification) => {
     type: SET_VERIFICATION_REGISTER,
     correctVerification: correctVerification,
   };
-};
-
-export const setValidity = (validity) => {
-  return { type: SET_VALIDITY_REGISTER, validAccount: validity };
-};
-
-export const setCompleteness = (completeness) => {
-  return { type: SET_COMPLETENESS_REGISTER, complete: completeness };
 };
 
 export const reset = () => {

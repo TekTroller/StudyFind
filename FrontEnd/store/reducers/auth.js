@@ -2,14 +2,12 @@ import {
   ENTER_EMAIL,
   ENTER_PASSWORD,
   SWITCH_ACCOUNT_TYPE,
-  SET_VALIDITY,
 } from "../actions/auth";
 
 const initialState = {
   loginEmail: "",
   loginPassword: "",
   loginAccountType: "Patient",
-  validLoginAccount: false,
 };
 
 export default (state = initialState, action) => {
@@ -20,8 +18,6 @@ export default (state = initialState, action) => {
       return { ...state, loginPassword: action.password };
     case SWITCH_ACCOUNT_TYPE:
       return { ...state, loginAccountType: action.accountType };
-    case SET_VALIDITY:
-      return { ...state, validLoginAccount: action.validAccount };
     default:
       return state;
   }

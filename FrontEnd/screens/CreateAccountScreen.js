@@ -28,6 +28,8 @@ const CreateAccountScreen = (props) => {
 
   const [codeSent, setCodeSent] = useState(false);
   const [canRegister, setCanRegister] = useState(false);
+  const [valid, setValid] = useState(false);
+  const [complete, setComplete] = useState(false);
 
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const birthdayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
@@ -35,33 +37,33 @@ const CreateAccountScreen = (props) => {
   const checkValidity = () => {
     let isValid = true;
     if (!emailRegex.test(registrationInfo.email.toLowerCase())) {
-      //console.log(1);
+      console.log(1);
       isValid = false;
     }
     if (registrationInfo.password.length < 8) {
-      //console.log(2);
+      console.log(2);
       isValid = false;
     }
     if (registrationInfo.confirmation !== registrationInfo.password) {
-      //console.log(3);
+      console.log(3);
       isValid = false;
     }
     if (registrationInfo.name.length === 0) {
-      //console.log(4);
+      console.log(4);
       isValid = false;
     }
     if (registrationInfo.accountType === "Patient") {
       if (!birthdayRegex.test(registrationInfo.birthday)) {
-        //console.log(5);
+        console.log(5);
         isValid = false;
       }
       if (registrationInfo.gender === "") {
-        //console.log(6);
+        console.log(6);
         isValid = false;
       }
     } else {
       if (!INSTITUTES.includes(registrationInfo.institute)) {
-        //console.log(7);
+        console.log(7);
         isValid = false;
       }
       if (
@@ -70,24 +72,23 @@ const CreateAccountScreen = (props) => {
           registrationInfo.email.length
         ) !== ".edu"
       ) {
-        //console.log(8);
+        console.log(8);
         isValid = false;
       }
     }
-    dispatch(registrationActions.setValidity(isValid));
+    setValid(isValid);
   };
 
   const checkCompleteness = () => {
     let completeness = false;
     if (
-      registrationInfo.validAccount &&
+      valid &&
+      registrationInfo.correctVerification !== "" &&
       registrationInfo.verification === registrationInfo.correctVerification
     ) {
-      console.log(codeSent);
       completeness = true;
     }
-    console.log(completeness);
-    dispatch(registrationActions.setCompleteness(completeness));
+    setComplete(completeness);
   };
 
   const setPatientAccountHandler = () => {
@@ -176,6 +177,11 @@ const CreateAccountScreen = (props) => {
     }
   };
 
+  useEffect(() => {
+    checkValidity();
+    checkCompleteness();
+  });
+
   let instituteSelector = null;
   let genderSpecify = null;
   let birthdayInput = null;
@@ -228,7 +234,9 @@ const CreateAccountScreen = (props) => {
             status={
               registrationInfo.gender === "male" ? "checked" : "unchecked"
             }
-            onPress={() => enterGender("male")}
+            onPress={() => {
+              enterGender("male");
+            }}
             color={Colors.studyFindBlue}
           />
           <Text
@@ -245,7 +253,9 @@ const CreateAccountScreen = (props) => {
             status={
               registrationInfo.gender === "female" ? "checked" : "unchecked"
             }
-            onPress={() => enterGender("female")}
+            onPress={() => {
+              enterGender("female");
+            }}
             color={Colors.studyFindBlue}
           />
           <Text
@@ -265,7 +275,9 @@ const CreateAccountScreen = (props) => {
                 ? "checked"
                 : "unchecked"
             }
-            onPress={() => enterGender("other: ")}
+            onPress={() => {
+              enterGender("other: ");
+            }}
             color={Colors.studyFindBlue}
           />
           <Text
@@ -376,7 +388,7 @@ const CreateAccountScreen = (props) => {
                   />
                   <TouchableOpacity
                     style={
-                      codeSent || !registrationInfo.validAccount
+                      codeSent || !valid
                         ? styles.resend_button
                         : styles.send_code_button
                     }
@@ -390,11 +402,7 @@ const CreateAccountScreen = (props) => {
               </View>
               <View style={styles.register_wrapper}>
                 <TouchableOpacity
-                  style={
-                    registrationInfo.complete
-                      ? styles.button
-                      : styles.button_inactive
-                  }
+                  style={complete ? styles.button : styles.button_inactive}
                   onPress={register}
                 >
                   <Text style={styles.button_register}>CREATE</Text>
@@ -488,6 +496,7 @@ const styles = StyleSheet.create({
     width: 270,
     height: 50,
     alignContent: "center",
+    elevation: 2,
   },
 
   button_inactive: {
