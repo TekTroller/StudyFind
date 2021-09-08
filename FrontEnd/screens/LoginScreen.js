@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -16,12 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Colors from "../assets/Colors";
 import AccountType from "../components/AccountType";
-import {
-  enterEmail,
-  enterPassword,
-  switchAccountType,
-  setValidity,
-} from "../store/actions/auth";
+import * as authActions from "../store/actions/auth";
 
 const GRAY = Colors.studyFindGray;
 
@@ -34,57 +29,50 @@ const LoginScreen = (props) => {
   }
 
   const dispatch = useDispatch();
+  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  const enterEmailHandler = (enteredText) => {
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const checkValidity = () => {
     let isValid = true;
-    if (enteredText.trim().length === 0) {
+    if (!emailRegex.test(authenticationInfo.loginEmail.toLowerCase())) {
       isValid = false;
     }
-    if (!emailRegex.test(enteredText.toLowerCase())) {
+    if (authenticationInfo.loginPassword.length < 8) {
       isValid = false;
     }
-    if (authenticationInfo.password.length < 8) {
-      isValid = false;
-    }
-    dispatch(enterEmail(enteredText));
-    dispatch(setValidity(isValid));
+    return isValid;
   };
 
-  const enterPasswordHandler = (enteredText) => {
-    const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    let isValid = true;
-    if (authenticationInfo.email.trim().length === 0) {
-      isValid = false;
-    }
-    if (!emailRegex.test(authenticationInfo.email.toLowerCase())) {
-      isValid = false;
-    }
-    if (enteredText.length < 8) {
-      isValid = false;
-    }
-    dispatch(enterPassword(enteredText));
-    dispatch(setValidity(enteredText.length >= 8));
+  const enterEmailHandler = (email) => {
+    dispatch(authActions.enterEmail(email));
+    let isValid = checkValidity();
+    dispatch(authActions.setValidity(isValid));
+  };
+
+  const enterPasswordHandler = (password) => {
+    dispatch(authActions.enterPassword(password));
+    let isValid = checkValidity();
+    dispatch(authActions.setValidity(isValid));
   };
 
   const setPatientAccountHandler = () => {
-    dispatch(switchAccountType("Patient"));
+    dispatch(authActions.switchAccountType("Patient"));
   };
 
   const setProfessionalAccountHandler = () => {
-    dispatch(switchAccountType("Professional"));
+    dispatch(authActions.switchAccountType("Professional"));
   };
 
   const logIn = () => {
-    if (authenticationInfo.validAccount) {
+    if (authenticationInfo.validLoginAccount) {
       props.navigation.navigate({ routeName: "PatientRecords" });
     }
   };
 
   let error = null;
   if (
-    (authenticationInfo.email !== "" || authenticationInfo.password !== "") &&
-    !authenticationInfo.validAccount
+    (authenticationInfo.loginEmail !== "" ||
+      authenticationInfo.loginPassword !== "") &&
+    !authenticationInfo.validLoginAccount
   ) {
     error = (
       <Text style={{ color: "red", marginLeft: "2%", fontSize: 10 }}>
@@ -106,7 +94,7 @@ const LoginScreen = (props) => {
           style={styles.image}
         />
         <AccountType
-          accountType={authenticationInfo.accountType}
+          accountType={authenticationInfo.loginAccountType}
           setPatientAccountHandler={setPatientAccountHandler}
           setProfessionalAccountHandler={setProfessionalAccountHandler}
         />
@@ -115,7 +103,7 @@ const LoginScreen = (props) => {
             nativeID="user"
             textAlign="left"
             placeholder={
-              authenticationInfo.accountType === "Patient"
+              authenticationInfo.loginAccountType === "Patient"
                 ? "Email"
                 : "Institute Email"
             }
@@ -123,7 +111,7 @@ const LoginScreen = (props) => {
             underlineColorAndroid={GRAY}
             style={styles.input}
             keyboardType={"email-address"}
-            value={authenticationInfo.email}
+            value={authenticationInfo.loginEmail}
             onChangeText={enterEmailHandler}
           />
           <TextInput
@@ -140,7 +128,7 @@ const LoginScreen = (props) => {
         </View>
         <TouchableOpacity
           style={
-            authenticationInfo.validAccount
+            authenticationInfo.validLoginAccount
               ? styles.button
               : styles.button_inactive
           }
@@ -182,7 +170,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "white",
-    //justifyContent: "center",
   },
 
   image: {

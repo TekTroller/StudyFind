@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -11,94 +11,306 @@ import {
   KeyboardAvoidingView,
   Keyboard,
 } from "react-native";
-
-import { Picker } from "@react-native-picker/picker";
+import { useDispatch, useSelector } from "react-redux";
+import { RadioButton } from "react-native-paper";
+import SelectDropdown from "react-native-select-dropdown";
 
 import AccountType from "../components/AccountType";
 import RegisterInput from "../components/RegisterInput";
 import Colors from "../assets/Colors";
-
-const GRAY = Colors.studyFindGray;
+import INSTITUTES from "../data/dummy-data";
+import * as registrationActions from "../store/actions/register";
 
 const CreateAccountScreen = (props) => {
-  const [role, setRole] = useState("Male");
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [confirmedPassword, setConfirmedPassword] = useState("");
-  const [verification, setVerification] = useState("");
+  const registrationInfo = useSelector((state) => state.registration);
+  const dispatch = useDispatch();
+  console.log(registrationInfo);
 
   const [codeSent, setCodeSent] = useState(false);
-  const [valid, setValid] = useState(false);
+  const [canRegister, setCanRegister] = useState(false);
 
-  const enterEmail = (enteredText) => {
-    setEnteredEmail(enteredText);
-    if (
-      enteredEmail.includes("@") &&
-      enteredEmail.includes(".") &&
-      enteredPassword.length >= 8 &&
-      confirmedPassword == enteredPassword &&
-      verification.length >= 6
-    ) {
-      setValid(true);
-    } else {
-      setValid(false);
+  const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const birthdayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
+
+  const checkValidity = () => {
+    let isValid = true;
+    if (!emailRegex.test(registrationInfo.email.toLowerCase())) {
+      //console.log(1);
+      isValid = false;
     }
+    if (registrationInfo.password.length < 8) {
+      //console.log(2);
+      isValid = false;
+    }
+    if (registrationInfo.confirmation !== registrationInfo.password) {
+      //console.log(3);
+      isValid = false;
+    }
+    if (registrationInfo.name.length === 0) {
+      //console.log(4);
+      isValid = false;
+    }
+    if (registrationInfo.accountType === "Patient") {
+      if (!birthdayRegex.test(registrationInfo.birthday)) {
+        //console.log(5);
+        isValid = false;
+      }
+      if (registrationInfo.gender === "") {
+        //console.log(6);
+        isValid = false;
+      }
+    } else {
+      if (!INSTITUTES.includes(registrationInfo.institute)) {
+        //console.log(7);
+        isValid = false;
+      }
+      if (
+        registrationInfo.email.substring(
+          registrationInfo.email.length - 4,
+          registrationInfo.email.length
+        ) !== ".edu"
+      ) {
+        //console.log(8);
+        isValid = false;
+      }
+    }
+    dispatch(registrationActions.setValidity(isValid));
   };
 
-  const enterPassword = (enteredText) => {
-    setEnteredPassword(enteredText);
+  const checkCompleteness = () => {
+    let completeness = false;
     if (
-      enteredEmail.includes("@") &&
-      enteredEmail.includes(".") &&
-      enteredText.length >= 8 &&
-      confirmedPassword == enteredPassword &&
-      verification.length >= 6
+      registrationInfo.validAccount &&
+      registrationInfo.verification === registrationInfo.correctVerification
     ) {
-      setValid(true);
-    } else {
-      setValid(false);
+      console.log(codeSent);
+      completeness = true;
     }
+    console.log(completeness);
+    dispatch(registrationActions.setCompleteness(completeness));
   };
 
-  const enterConfirmation = (enteredText) => {
-    setConfirmedPassword(enteredText);
-    if (
-      enteredEmail.includes("@") &&
-      enteredEmail.includes(".") &&
-      enteredPassword.length >= 8 &&
-      confirmedPassword == enteredPassword &&
-      verification.length >= 6
-    ) {
-      setValid(true);
-    } else {
-      setValid(false);
+  const setPatientAccountHandler = () => {
+    if (registrationInfo.accountType === "Professional") {
+      console.log("here");
+      setCodeSent(false);
+      registrationActions.reset();
     }
+    dispatch(registrationActions.switchAccountType("Patient"));
+    checkValidity();
+    checkCompleteness();
   };
 
-  const enterVerification = (enteredText) => {
-    setVerification(enteredText);
-    if (
-      enteredEmail.includes("@") &&
-      enteredEmail.includes(".") &&
-      enteredPassword.length >= 8 &&
-      confirmedPassword == enteredPassword &&
-      enteredText.length >= 6
-    ) {
-      setValid(true);
-    } else {
-      setValid(false);
+  const setProfessionalAccountHandler = () => {
+    if (registrationInfo.accountType === "Patient") {
+      setCodeSent(false);
+      registrationActions.reset();
     }
+    dispatch(registrationActions.switchAccountType("Professional"));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterEmail = (email) => {
+    dispatch(registrationActions.enterEmail(email));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterPassword = (password) => {
+    dispatch(registrationActions.enterPassword(password));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterConfirmation = (confirmation) => {
+    dispatch(registrationActions.enterConfirmationPassword(confirmation));
+    //console.log(
+    //  "check: " + registrationInfo.password + registrationInfo.confirmation
+    //);
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterName = (name) => {
+    dispatch(registrationActions.enterName(name));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterInstitute = (institute) => {
+    dispatch(registrationActions.enterInstitute(institute));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterBirthday = (birthday) => {
+    dispatch(registrationActions.enterBirthday(birthday));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterGender = (gender) => {
+    dispatch(registrationActions.enterGender(gender));
+    checkValidity();
+    checkCompleteness();
+  };
+
+  const enterVerification = (verification) => {
+    dispatch(registrationActions.enterVerification(verification));
+    checkValidity();
+    checkCompleteness();
   };
 
   const sendCode = () => {
     setCodeSent(true);
+    const dummyCode = "000000";
+    dispatch(registrationActions.setVerification(dummyCode));
+    checkValidity();
+    checkCompleteness();
   };
 
   const register = () => {
-    if (valid) {
+    if (registrationInfo.complete) {
       props.navigation.navigate({ routeName: "Success" });
     }
   };
+
+  let instituteSelector = null;
+  let genderSpecify = null;
+  let birthdayInput = null;
+  let genderInput = null;
+
+  if (registrationInfo.gender) {
+    if (registrationInfo.gender.substring(0, 5) === "other") {
+      genderSpecify = (
+        <RegisterInput
+          text="(please specify)"
+          placeholder=""
+          onChangeText={(entered) => {
+            enterGender("other: " + entered);
+          }}
+          value={registrationInfo.gender.substring(7)}
+          password
+        />
+      );
+    }
+  }
+
+  if (registrationInfo.accountType === "Patient") {
+    birthdayInput = (
+      <RegisterInput
+        text="birthday"
+        placeholder="mm/dd/yyyy"
+        onChangeText={enterBirthday}
+        value={registrationInfo.birthday}
+      />
+    );
+  }
+
+  if (registrationInfo.accountType === "Patient") {
+    genderInput = (
+      <View>
+        <Text
+          style={{
+            fontSize: 12,
+            color: "gray",
+            marginTop: 10,
+            alignSelf: "center",
+            width: 270,
+          }}
+        >
+          gender
+        </Text>
+        <View style={styles.radio_input_wrapper}>
+          <RadioButton
+            value="male"
+            status={
+              registrationInfo.gender === "male" ? "checked" : "unchecked"
+            }
+            onPress={() => enterGender("male")}
+            color={Colors.studyFindBlue}
+          />
+          <Text
+            style={{
+              fontSize: 11,
+              color: "gray",
+              alignSelf: "center",
+            }}
+          >
+            male
+          </Text>
+          <RadioButton
+            value="female"
+            status={
+              registrationInfo.gender === "female" ? "checked" : "unchecked"
+            }
+            onPress={() => enterGender("female")}
+            color={Colors.studyFindBlue}
+          />
+          <Text
+            style={{
+              fontSize: 11,
+              color: "gray",
+              alignSelf: "center",
+            }}
+          >
+            female
+          </Text>
+          <RadioButton
+            value="other"
+            status={
+              registrationInfo.gender &&
+              registrationInfo.gender.substring(0, 5) === "other"
+                ? "checked"
+                : "unchecked"
+            }
+            onPress={() => enterGender("other: ")}
+            color={Colors.studyFindBlue}
+          />
+          <Text
+            style={{
+              fontSize: 11,
+              color: "gray",
+              alignSelf: "center",
+            }}
+          >
+            other
+          </Text>
+        </View>
+        {genderSpecify}
+      </View>
+    );
+  }
+
+  if (registrationInfo.accountType === "Professional") {
+    instituteSelector = (
+      <View style={{ width: 270, alignSelf: "center", marginTop: 20 }}>
+        <Text
+          style={{
+            fontSize: 11,
+            color: "gray",
+            marginBottom: 5,
+          }}
+        >
+          institute of affiliation
+        </Text>
+        <SelectDropdown
+          data={INSTITUTES}
+          defaultButtonText={
+            registrationInfo.institute === ""
+              ? "(select an institute)"
+              : registrationInfo.institute
+          }
+          buttonStyle={styles.institute_selector}
+          buttonTextStyle={styles.institute_selector_text}
+          dropdownStyle={styles.institute_selecter_dropdown}
+          rowTextStyle={styles.institute_selector_text}
+          onSelect={(selectedItem) => enterInstitute(selectedItem)}
+        />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
@@ -111,93 +323,95 @@ const CreateAccountScreen = (props) => {
         <View style={styles.container}>
           <StatusBar backgroundColor={("black", 60)} />
           <View style={{ justifyContent: "center" }}>
-            <View style={styles.input_wrapper}>
-              <AccountType accountType={"Patient"} />
-              <RegisterInput
-                text="e-mail"
-                placeholder=""
-                onChangeText={enterEmail}
-                value={enteredEmail}
-              />
-              <RegisterInput
-                text="password"
-                placeholder="(at least 8 characters)"
-                onChangeText={enterPassword}
-                value={enteredPassword}
-                password
-              />
-              <RegisterInput
-                text="confirm password"
-                placeholder="(at least 8 characters)"
-                onChangeText={enterConfirmation}
-                value={verification}
-                password
-              />
-              <RegisterInput text="full name" placeholder="" />
-              <RegisterInput text="birthday" placeholder="yyyy/mm/dd" />
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: "gray",
-                  marginTop: 10,
-                  alignSelf: "center",
-                  width: 270,
-                }}
-              >
-                gender
-              </Text>
-              <View style={styles.picker_wrapper}>
-                <Picker
-                  // style={styles.picker}
-                  selectedValue={role}
-                  onValueChange={(itemValue, itemIndex) => setRole(itemValue)}
-                >
-                  <Picker.Item label="Male" value="Male" />
-                  <Picker.Item label="Female" value="Female" />
-                  <Picker.Item label="Other" value="Other" />
-                </Picker>
-              </View>
-              <View style={styles.send_code}>
-                <TextInput
-                  nativeID="verification"
-                  textAlign="left"
-                  placeholder="Verification Code"
-                  sectionColor={"#2C98F0"}
-                  underlineColorAndroid={GRAY}
-                  style={styles.verification}
-                  onChangeText={enterVerification}
-                  value={verification}
+            <ScrollView>
+              <View style={styles.input_wrapper}>
+                <AccountType
+                  accountType={registrationInfo.accountType}
+                  setPatientAccountHandler={setPatientAccountHandler}
+                  setProfessionalAccountHandler={setProfessionalAccountHandler}
                 />
+                {instituteSelector}
+                <RegisterInput
+                  text={
+                    registrationInfo.accountType === "Patient"
+                      ? "e-mail"
+                      : "institute e-mail"
+                  }
+                  placeholder=""
+                  onChangeText={enterEmail}
+                  value={registrationInfo.email}
+                />
+                <RegisterInput
+                  text="password"
+                  placeholder="(at least 8 characters)"
+                  onChangeText={enterPassword}
+                  value={registrationInfo.password}
+                  password
+                />
+                <RegisterInput
+                  text="confirm password"
+                  placeholder="(at least 8 characters)"
+                  onChangeText={enterConfirmation}
+                  value={registrationInfo.confirmation}
+                  password
+                />
+                <RegisterInput
+                  text="full name"
+                  placeholder=""
+                  onChangeText={enterName}
+                  value={registrationInfo.name}
+                />
+                {birthdayInput}
+                {genderInput}
+                <View style={styles.send_code}>
+                  <TextInput
+                    nativeID="verification"
+                    textAlign="left"
+                    placeholder="verification code"
+                    sectionColor={Colors.studyFindBlue}
+                    underlineColorAndroid={Colors.studyFindGray}
+                    style={styles.verification}
+                    onChangeText={enterVerification}
+                    value={registrationInfo.verification}
+                  />
+                  <TouchableOpacity
+                    style={
+                      codeSent || !registrationInfo.validAccount
+                        ? styles.resend_button
+                        : styles.send_code_button
+                    }
+                    onPress={sendCode}
+                  >
+                    <Text style={styles.send_code_text}>
+                      {codeSent ? "RESEND" : "SEND CODE"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.register_wrapper}>
                 <TouchableOpacity
                   style={
-                    codeSent ? styles.resend_button : styles.send_code_button
+                    registrationInfo.complete
+                      ? styles.button
+                      : styles.button_inactive
                   }
-                  onPress={sendCode}
+                  onPress={register}
                 >
-                  <Text style={styles.send_code_text}>
-                    {codeSent ? "RESEND" : "SEND CODE"}
-                  </Text>
+                  <Text style={styles.button_register}>CREATE</Text>
                 </TouchableOpacity>
+                <View style={styles.login}>
+                  <Text>Already have an account? </Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      registrationActions.reset();
+                      props.navigation.navigate({ routeName: "Login" });
+                    }}
+                  >
+                    <Text style={{ color: Colors.studyFindBlue }}>sign in</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-            <View style={styles.register_wrapper}>
-              <TouchableOpacity
-                style={valid ? styles.button : styles.button_inactive}
-                onPress={register}
-              >
-                <Text style={styles.button_register}>CREATE</Text>
-              </TouchableOpacity>
-              <View style={styles.login}>
-                <Text>Already have an account? </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    props.navigation.navigate({ routeName: "Login" });
-                  }}
-                >
-                  <Text style={{ color: Colors.studyFindBlue }}>Login</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+            </ScrollView>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -221,32 +435,24 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 
-  // image: {
-  //   width: 244,
-  //   height: 75,
-  //   alignSelf: "center",
-  //   marginTop: 15,
-  // },
-
-  picker_wrapper: {
-    marginTop: 10,
-    height: 30,
-    width: 270,
-    alignSelf: "center",
-    paddingLeft: 8,
+  institute_selector: {
     borderRadius: 4,
-    borderTopWidth: 1,
-    borderLeftWidth: 2,
-    borderRightWidth: 2,
-    borderBottomWidth: 3,
-    borderTopColor: ("black", 20),
-    borderLeftColor: ("black", 20),
-    borderRightColor: ("black", 20),
-    borderBottomColor: ("black", 40),
+    height: 30,
+    width: 250,
+    backgroundColor: Colors.studyFindGray,
+    marginBottom: 10,
+  },
+
+  institute_selecter_dropdown: {
+    borderRadius: 4,
+  },
+
+  institute_selector_text: {
+    fontFamily: "Roboto",
+    fontSize: 14,
   },
 
   input_wrapper: {
-    //height: 265,
     marginTop: 20,
     alignSelf: "center",
   },
@@ -258,6 +464,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 
+  radio_input_wrapper: {
+    width: 270,
+    flexDirection: "row",
+    alignSelf: "center",
+  },
+
   verification: {
     width: 140,
     height: 45,
@@ -266,7 +478,6 @@ const styles = StyleSheet.create({
 
   register_wrapper: {
     marginTop: 20,
-    //height: 60,
   },
 
   button: {
@@ -280,7 +491,7 @@ const styles = StyleSheet.create({
   },
 
   button_inactive: {
-    backgroundColor: GRAY,
+    backgroundColor: Colors.studyFindGray,
     alignSelf: "center",
     marginTop: 20,
     borderRadius: 4,
@@ -313,7 +524,7 @@ const styles = StyleSheet.create({
   },
 
   resend_button: {
-    backgroundColor: GRAY,
+    backgroundColor: Colors.studyFindGray,
     width: 100,
     height: 33,
     alignContent: "center",

@@ -6,25 +6,23 @@ import {
 } from "../actions/auth";
 
 const initialState = {
-  email: "",
-  password: "",
-  accountType: "Patient",
-  validAccount: false,
+  loginEmail: "",
+  loginPassword: "",
+  loginAccountType: "Patient",
+  validLoginAccount: false,
 };
 
-const authReducer = (state = initialState, action) => {
+export default (state = initialState, action) => {
   switch (action.type) {
     case ENTER_EMAIL:
-      return { ...state, email: action.email };
+      return { ...state, loginEmail: action.email };
     case ENTER_PASSWORD:
-      return { ...state, password: action.password };
+      return { ...state, loginPassword: action.password };
     case SWITCH_ACCOUNT_TYPE:
-      return { ...state, accountType: action.accountType };
+      return { ...state, loginAccountType: action.accountType };
     case SET_VALIDITY:
-      return { ...state, validAccount: action.validAccount };
+      return { ...state, validLoginAccount: action.validAccount };
     default:
       return state;
   }
 };
-
-export default authReducer;
