@@ -5,11 +5,10 @@ const WalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
 const LoginDatabase = require('../builds/LoginDatabase.json');
 
+const mnemonic = 'stairs basic flag mandate split marble oven cliff anxiety trap model morning';
+const infura_provider = 'https://rinkeby.infura.io/v3/124660071809414c801dce8cc1941cae';
 
-const provider = new WalletProvider(
-    'stairs basic flag mandate split marble oven cliff anxiety trap model morning',
-    'https://rinkeby.infura.io/v3/f95650b8297a4bf4a2eccfddf84d5865'
-);
+const provider = new WalletProvider(mnemonic, infura_provider);
 
 const web3 = new Web3(provider)
 

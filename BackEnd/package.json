@@ -1,19 +1,18 @@
 {
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject",
+    "start": "node node/LoginServer.js",
     "test": "mocha **/tests/*.test.js"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "ganache-cli": "^6.12.2",
+    "nodemailer": "^6.6.3",
     "solc": "^0.8.7",
     "web3": "^1.5.2"
   },
   "devDependencies": {
+    "axios": "^0.21.4",
     "mocha": "^8.3.2",
     "truffle-hdwallet-provider": "^1.0.17"
   },

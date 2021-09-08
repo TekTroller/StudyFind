@@ -22,7 +22,7 @@ beforeEach(async () => {
 
 });
 
-describe('Login Database contract test', ()=> {
+describe('Login Database Contract Test', ()=> {
     it('Login Database contract compliation and deployment', () => {
         assert.ok(contract);
     });
