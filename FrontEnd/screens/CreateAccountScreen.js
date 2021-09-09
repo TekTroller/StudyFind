@@ -24,10 +24,9 @@ import * as registrationActions from "../store/actions/register";
 const CreateAccountScreen = (props) => {
   const registrationInfo = useSelector((state) => state.registration);
   const dispatch = useDispatch();
-  console.log(registrationInfo);
+  //console.log(registrationInfo);
 
   const [codeSent, setCodeSent] = useState(false);
-  const [canRegister, setCanRegister] = useState(false);
   const [valid, setValid] = useState(false);
   const [complete, setComplete] = useState(false);
 
@@ -37,33 +36,33 @@ const CreateAccountScreen = (props) => {
   const checkValidity = () => {
     let isValid = true;
     if (!emailRegex.test(registrationInfo.email.toLowerCase())) {
-      console.log(1);
+      //console.log(1);
       isValid = false;
     }
     if (registrationInfo.password.length < 8) {
-      console.log(2);
+      //console.log(2);
       isValid = false;
     }
     if (registrationInfo.confirmation !== registrationInfo.password) {
-      console.log(3);
+      //console.log(3);
       isValid = false;
     }
     if (registrationInfo.name.length === 0) {
-      console.log(4);
+      //console.log(4);
       isValid = false;
     }
     if (registrationInfo.accountType === "Patient") {
       if (!birthdayRegex.test(registrationInfo.birthday)) {
-        console.log(5);
+        //console.log(5);
         isValid = false;
       }
       if (registrationInfo.gender === "") {
-        console.log(6);
+        //console.log(6);
         isValid = false;
       }
     } else {
       if (!INSTITUTES.includes(registrationInfo.institute)) {
-        console.log(7);
+        //console.log(7);
         isValid = false;
       }
       if (
@@ -72,7 +71,7 @@ const CreateAccountScreen = (props) => {
           registrationInfo.email.length
         ) !== ".edu"
       ) {
-        console.log(8);
+        //console.log(8);
         isValid = false;
       }
     }
