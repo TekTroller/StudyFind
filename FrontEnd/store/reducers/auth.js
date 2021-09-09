@@ -2,12 +2,14 @@ import {
   ENTER_EMAIL,
   ENTER_PASSWORD,
   SWITCH_ACCOUNT_TYPE,
+  AUTHENTICATE,
 } from "../actions/auth";
 
 const initialState = {
   loginEmail: "",
   loginPassword: "",
   loginAccountType: "Patient",
+  authenticated: false,
 };
 
 export default (state = initialState, action) => {
@@ -18,6 +20,8 @@ export default (state = initialState, action) => {
       return { ...state, loginPassword: action.password };
     case SWITCH_ACCOUNT_TYPE:
       return { ...state, loginAccountType: action.accountType };
+    case AUTHENTICATE:
+      return { ...state, authenticated: action.authenticated };
     default:
       return state;
   }

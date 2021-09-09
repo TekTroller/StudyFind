@@ -55,8 +55,9 @@ const LoginScreen = (props) => {
     dispatch(authActions.switchAccountType("Professional"));
   };
 
-  const logIn = () => {
+  const logIn = async () => {
     if (valid) {
+      await dispatch(authActions.authenticate());
       props.navigation.navigate({ routeName: "PatientRecords" });
     }
   };
@@ -149,11 +150,6 @@ const LoginScreen = (props) => {
 
 LoginScreen.navigationOptions = {
   headerTitle: "Login",
-  headerStyle: {
-    backgroundColor: Colors.studyFindDarkBlue,
-  },
-  headerTintColor: "white",
-  headerTintSize: 30,
 };
 
 const styles = StyleSheet.create({
