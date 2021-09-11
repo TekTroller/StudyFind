@@ -1,15 +1,15 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+//import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
-import Colors from "../assets/Colors";
+import Colors from "../../assets/Colors";
 
 const SuccessScreen = (props) => {
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={("black", 60)} />
-      <KeyboardAwareScrollView style={{ flex: 1, width: "100%" }}>
+      <View>
         <Text style={{ marginTop: 80, alignSelf: "center" }}>
           Account Created! Click to "RETURN" to Login screen.
         </Text>
@@ -36,7 +36,7 @@ const SuccessScreen = (props) => {
             RETURN
           </Text>
         </TouchableOpacity>
-      </KeyboardAwareScrollView>
+      </View>
     </View>
   );
 };
