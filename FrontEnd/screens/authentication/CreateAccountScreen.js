@@ -15,11 +15,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { RadioButton } from "react-native-paper";
 import SelectDropdown from "react-native-select-dropdown";
 
-import AccountType from "../components/AccountType";
-import RegisterInput from "../components/RegisterInput";
-import Colors from "../assets/Colors";
-import INSTITUTES from "../data/dummy-data";
-import * as registrationActions from "../store/actions/register";
+import AccountType from "../../components/AccountType";
+import RegisterInput from "../../components/RegisterInput";
+import Colors from "../../assets/Colors";
+import INSTITUTES from "../../data/dummy-data";
+import * as registrationActions from "../../store/actions/register";
 
 const CreateAccountScreen = (props) => {
   const registrationInfo = useSelector((state) => state.registration);

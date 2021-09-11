@@ -12,11 +12,11 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
-import Colors from "../assets/Colors";
-import AccountType from "../components/AccountType";
-import * as authActions from "../store/actions/auth";
-import { setValidity } from "../store/actions/register";
-import auth from "../store/reducers/auth";
+import Colors from "../../assets/Colors";
+import AccountType from "../../components/AccountType";
+import * as authActions from "../../store/actions/auth";
+//import { setValidity } from "../../store/actions/register";
+//import auth from "../../store/reducers/auth";
 
 const LoginScreen = (props) => {
   const authenticationInfo = useSelector((state) => state.authentication);
@@ -35,7 +35,7 @@ const LoginScreen = (props) => {
     if (authenticationInfo.loginPassword.length < 8) {
       isValid = false;
     }
-    console.log(isValid);
+    //console.log(isValid);
     setValid(isValid);
   };
 
@@ -58,7 +58,11 @@ const LoginScreen = (props) => {
   const logIn = async () => {
     if (valid) {
       await dispatch(authActions.authenticate());
-      props.navigation.navigate({ routeName: "PatientRecords" });
+      if (authenticationInfo.loginAccountType === "Patient") {
+        props.navigation.navigate({ routeName: "PatientRecords" });
+      } else {
+        props.navigation.navigate({ routeName: "Patients" });
+      }
     }
   };
 
@@ -86,7 +90,7 @@ const LoginScreen = (props) => {
       <View style={styles.inner}>
         <StatusBar backgroundColor={("black", 60)} />
         <Image
-          source={require("../assets/client-logo.png")}
+          source={require("../../assets/client-logo.png")}
           style={styles.image}
         />
         <AccountType
