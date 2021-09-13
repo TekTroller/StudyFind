@@ -7,6 +7,7 @@ import NavigationContainer from "./navigation/NavigationContainer";
 import authReducer from "./store/reducers/auth";
 import registerReducer from "./store/reducers/register";
 import patientRecordsReducer from "./store/reducers/patientRecords";
+import patientListReducer from "./store/reducers/patientList";
 
 enableScreens();
 
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   authentication: authReducer,
   registration: registerReducer,
   patientRecords: patientRecordsReducer,
+  patientList: patientListReducer,
 });
 
 const store = createStore(rootReducer);

@@ -61,7 +61,7 @@ const LoginScreen = (props) => {
       if (authenticationInfo.loginAccountType === "Patient") {
         props.navigation.navigate({ routeName: "PatientRecords" });
       } else {
-        props.navigation.navigate({ routeName: "Patients" });
+        props.navigation.navigate({ routeName: "PatientList" });
       }
     }
   };
