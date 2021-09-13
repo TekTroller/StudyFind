@@ -6,12 +6,14 @@ import { Provider } from "react-redux";
 import NavigationContainer from "./navigation/NavigationContainer";
 import authReducer from "./store/reducers/auth";
 import registerReducer from "./store/reducers/register";
+import patientRecordsReducer from "./store/reducers/patientRecords";
 
 enableScreens();
 
 const rootReducer = combineReducers({
   authentication: authReducer,
   registration: registerReducer,
+  patientRecords: patientRecordsReducer,
 });
 
 const store = createStore(rootReducer);
