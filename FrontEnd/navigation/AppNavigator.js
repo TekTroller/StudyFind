@@ -5,7 +5,7 @@ import LoginScreen from "../screens/authentication/LoginScreen";
 import CreateAccountScreen from "../screens/authentication/CreateAccountScreen";
 import PatientRecordsScreen from "../screens/patient/PatientRecordsScreen";
 import SuccessScreen from "../screens/authentication/SuccessScreen";
-import PatientsScreen from "../screens/professional/PatientsScreen";
+import PatientListScreen from "../screens/professional/PatientListScreen";
 import NewRecordScreen from "../screens/patient/NewRecordScreen";
 import Colors from "../assets/Colors";
 
@@ -34,7 +34,7 @@ const PatientNavigator = createStackNavigator(
 );
 
 const ProfessionalNavigator = createStackNavigator(
-  { Patients: PatientsScreen },
+  { PatientList: PatientListScreen },
   { defaultNavigationOptions: defaultNavOptions }
 );
 

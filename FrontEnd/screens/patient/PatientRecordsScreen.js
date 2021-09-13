@@ -8,11 +8,8 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-//import BottomSheet from "reanimated-bottom-sheet";
-//import Animated from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 
-//import CustomHeaderButton from "../../components/HeaderButton";
 import PatientRecord from "../../components/PatientRecord";
 import * as patientRecordsActions from "../../store/actions/patientRecords";
 import Colors from "../../assets/Colors";
