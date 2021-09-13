@@ -15,12 +15,12 @@ const tester_email = '6jerrylu@gmail.com';
 
 describe('Register Server Test', () => {
     beforeEach(() => {
-        server = require('../RegisterServer');
+        server = require('../RegistrationServer');
     });
     
     afterEach(() => {
         server.instance.close();
-        delete require.cache[require.resolve('../RegisterServer')];
+        delete require.cache[require.resolve('../RegistrationServer')];
     });
 
     it('Server stores code', async () => {
