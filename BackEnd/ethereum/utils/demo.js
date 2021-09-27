@@ -21,7 +21,7 @@ const register = async (email, password, isProfessionalAccount) => {
 }
 
 const verify = async (email, password, isProfessionalAccount) => {
-    const verified = await login_database.methods.verify("test@gmail.com", "12345678", true).call();
+    const verified = await login_database.methods.verify(email, password, isProfessionalAccount).call();
     return verified;
 }
 
