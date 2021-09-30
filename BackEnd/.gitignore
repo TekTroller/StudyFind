@@ -2,6 +2,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,node,solidity,soliditytruffle,windows,macos
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,node,solidity,soliditytruffle,windows,macos
 
+### git ###
+package-lock.json
+
 ### macOS ###
 # General
 .DS_Store

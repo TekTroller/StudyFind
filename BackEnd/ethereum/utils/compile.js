@@ -42,5 +42,5 @@ for (let contract in compiledContracts) {
             "bytecode": compiledContracts[contract]["evm"]["bytecode"]["object"]
         }
     );
-    console.log("Contract " + contract + " compiled successfully and stored to " + path.resolve(buildpath, contract + ".json"))
+    console.log("Contract " + contract + " compiled successfully and stored under builds folder")
 }

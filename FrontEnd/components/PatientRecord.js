@@ -7,7 +7,10 @@ import Colors from "../assets/Colors";
 const PatientRecord = (props) => {
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity style={styles.file_wrapper}>
+      <TouchableOpacity
+        style={styles.file_wrapper}
+        onPress={() => props.showRecordDetailHandler(props.record)}
+      >
         <Ionicons
           name="document-outline"
           color={Colors.studyFindDarkBlue}
@@ -45,6 +48,7 @@ const styles = StyleSheet.create({
   file_wrapper: {
     flexDirection: "row",
     height: "100%",
+    width: 270,
   },
 
   file_icon: {
@@ -60,7 +64,7 @@ const styles = StyleSheet.create({
   trash_wrapper: {
     width: 30,
     height: "100%",
-    left: 150,
+    marginLeft: 10,
   },
 
   title: {
