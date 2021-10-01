@@ -6,8 +6,8 @@ pragma abicoder v2;
 contract PatientFactory {
     address[] public deployedPatients;
     
-    function createPatient(string memory fname, string memory lname, string memory bday, string memory sex) public returns(address){
-        address patientAddress = address(new Patient(fname, lname, bday, sex));
+    function createPatient(string memory fullname, string memory bday, string memory sex) public returns(address){
+        address patientAddress = address(new Patient(fullname, bday, sex));
         deployedPatients.push(patientAddress);
         return patientAddress;
     }
@@ -18,8 +18,7 @@ contract PatientFactory {
 }
 
 contract Patient {
-    string public first_name;
-    string public last_name;
+    string public name;
     string public birthday;
     string public gender;
     mapping(string => string) private tokens;
@@ -35,9 +34,8 @@ contract Patient {
         _;
     }
 
-    constructor(string memory fname, string memory lname, string memory bday, string memory gndr) {
-        first_name = fname;
-        last_name = lname;
+    constructor(string memory fullname, string memory bday, string memory gndr) {
+        name = fullname;
         birthday = bday;
         gender = gndr;
     }
@@ -47,7 +45,7 @@ contract Patient {
         tokens[filename] = token;
     }
 
-    function get_file(string memory filename) public view fileExists(filename) returns(string memory) {
+    function view_file(string memory filename) public view fileExists(filename) returns(string memory) {
         return tokens[filename];
     }
 
@@ -70,5 +68,9 @@ contract Patient {
                 filenames[i] = new_filename;
             }
         }
+    }
+
+    function get_filenames() public view returns (string[] memory) {
+        return filenames;
     }
 }
