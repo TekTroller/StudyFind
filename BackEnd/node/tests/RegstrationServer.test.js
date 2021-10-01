@@ -11,16 +11,16 @@ let server;
 /**
  * Set to tester's email address for receiving testing code.
  */
-const tester_email = '6jerrylu@gmail.com';
+const tester_email = 'jlu628@gatech.edu';
 
 describe('Register Server Test', () => {
     beforeEach(() => {
-        server = require('../RegisterServer');
+        server = require('../RegistrationServer');
     });
     
     afterEach(() => {
         server.instance.close();
-        delete require.cache[require.resolve('../RegisterServer')];
+        delete require.cache[require.resolve('../RegistrationServer')];
     });
 
     it('Server stores code', async () => {
@@ -93,7 +93,7 @@ describe('Register Server Test', () => {
         assert(!res.data.verified);
     });
 
-    it('Verify code with changed email', async () => {
+    it('Verify code with wrong email', async () => {
         const email = 'email_addr@provider.domain';
         const changed_email = 'changed_email_addr@provider.domain';
         let res = await axios.get('http://localhost:3000/get_code', 
@@ -114,6 +114,7 @@ describe('Register Server Test', () => {
         assert(!res.data.verified);
     });
 
+    /* 
     it('Request multiple times', async () => {
         const email = 'email_addr@provider.domain';
 
@@ -181,4 +182,5 @@ describe('Register Server Test', () => {
         assert.equal(res.data.reason, 'email not recognized');
         assert.equal(res.data.message, 'Code may have expired, please resend code and try again.');
     }).timeout(310000);
+    */
 });

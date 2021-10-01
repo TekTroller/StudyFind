@@ -43,7 +43,7 @@ server.get('/get_code', (req, res) => {
       from: 'studyfindtesting@gmail.com',
       to: email,
       subject: 'StudyFind Medical Database Account Registration',
-      text: String(code)
+      text: "Your verification code is: " + String(code)
    };
 
    transporter.sendMail(mailOptions, function(error, info){
