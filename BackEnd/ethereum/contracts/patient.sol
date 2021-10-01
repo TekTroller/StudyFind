@@ -6,8 +6,8 @@ pragma abicoder v2;
 contract PatientFactory {
     address[] public deployedPatients;
     
-    function createPatient(string memory fname, string memory lname, string memory bday, string memory sex, address manager) public returns(address){
-        address patientAddress = address(new Patient(fname, lname, bday, sex, manager));
+    function createPatient(string memory fname, string memory lname, string memory bday, string memory sex) public returns(address){
+        address patientAddress = address(new Patient(fname, lname, bday, sex));
         deployedPatients.push(patientAddress);
         return patientAddress;
     }
@@ -22,38 +22,53 @@ contract Patient {
     string public last_name;
     string public birthday;
     string public gender;
-    address public owner;
     mapping(string => string) private tokens;
-    mapping(address => bool) private authorized_accessors;
-    string[] file_names;
+    string[] filenames;
 
-    modifier owner_only() {
-        require(msg.sender == owner);
+    modifier fileExists(string memory filename) {
+        require(bytes(tokens[filename]).length != 0);
         _;
     }
 
-    modifier authorized_only() {
-        require(authorized_accessors[msg.sender]);
+    modifier fileNotExists(string memory filename) {
+        require(bytes(tokens[filename]).length == 0);
         _;
     }
 
-    constructor(string memory fname, string memory lname, string memory bday, string memory sex, address manager) {
+    constructor(string memory fname, string memory lname, string memory bday, string memory gndr) {
         first_name = fname;
         last_name = lname;
         birthday = bday;
-        gender = sex;
-        owner = manager;
-        authorized_accessors[owner] = true;
+        gender = gndr;
     }
 
-    function add_token(string memory filename, string memory token) public owner_only {
-        require(bytes(tokens[filename]).length == 0);
-        file_names.push(filename);
+    function add_file(string memory filename, string memory token) public fileNotExists(filename) {
+        filenames.push(filename);
         tokens[filename] = token;
     }
 
-    function get_token(string memory filename) public view authorized_only returns(string memory){
-        require(bytes(tokens[filename]).length == 0);
+    function get_file(string memory filename) public view fileExists(filename) returns(string memory) {
         return tokens[filename];
+    }
+
+    function delete_file(string memory filename) public fileExists(filename) {
+        tokens[filename] = "";
+        for (uint256 i=0; i < filenames.length; i++) {
+            if (keccak256(abi.encodePacked((filenames[i]))) == keccak256(abi.encodePacked((filename)))) {
+                filenames[i] = filenames[filenames.length - 1];
+                filenames.pop();
+                break;
+            }
+        }
+    }
+
+    function change_filename(string memory old_filename, string memory new_filename) public fileExists(old_filename) fileNotExists(new_filename) {
+        tokens[new_filename] = tokens[old_filename];
+        tokens[old_filename] = "";
+        for (uint256 i=0; i < filenames.length; i++) {
+            if (keccak256(abi.encodePacked((filenames[i]))) == keccak256(abi.encodePacked((old_filename)))) {
+                filenames[i] = new_filename;
+            }
+        }
     }
 }
