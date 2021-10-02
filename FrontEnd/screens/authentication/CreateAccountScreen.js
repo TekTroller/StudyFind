@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -11,7 +12,6 @@ import {
   KeyboardAvoidingView,
   Keyboard,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import { RadioButton } from "react-native-paper";
 import SelectDropdown from "react-native-select-dropdown";
 
@@ -19,58 +19,93 @@ import AccountType from "../../components/AccountType";
 import RegisterInput from "../../components/RegisterInput";
 import Colors from "../../assets/Colors";
 import INSTITUTES from "../../data/dummy-data";
-import * as registrationActions from "../../store/actions/register";
+
+const initialState = {
+  email: "",
+  password: "",
+  confirmation: "",
+  name: "",
+  accountType: "Patient",
+  birthday: "",
+  gender: "",
+  institute: "",
+  verification: "",
+  correctVerification: "",
+  codeSent: false,
+  valid: false,
+  complete: false,
+};
 
 const CreateAccountScreen = (props) => {
-  const registrationInfo = useSelector((state) => state.registration);
-  const dispatch = useDispatch();
-  //console.log(registrationInfo);
+  const [email, setEmail] = useState(initialState.email);
+  const [password, setPassword] = useState(initialState.password);
+  const [confirmation, setConfirmation] = useState(initialState.confirmation);
+  const [name, setName] = useState(initialState.name);
+  const [accountType, setAccountType] = useState(initialState.accountType);
+  const [birthday, setBirthday] = useState(initialState.birthday);
+  const [gender, setGender] = useState(initialState.gender);
+  const [institute, setInstitute] = useState(initialState.institute);
+  const [verification, setVerification] = useState(initialState.verification);
+  const [correctVerification, setCorrectVerification] = useState(
+    initialState.correctVerification
+  );
 
-  const [codeSent, setCodeSent] = useState(false);
-  const [valid, setValid] = useState(false);
-  const [complete, setComplete] = useState(false);
+  const [codeSent, setCodeSent] = useState(initialState.codeSent);
+  const [valid, setValid] = useState(initialState.valid);
+  const [complete, setComplete] = useState(initialState.complete);
 
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const birthdayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
 
+  const reset = () => {
+    setEmail(initialState.email);
+    setPassword(initialState.password);
+    setConfirmation(initialState.confirmation);
+    setName(initialState.name);
+    setAccountType(initialState.accountType);
+    setBirthday(initialState.birthday);
+    setGender(initialState.gender);
+    setInstitute(initialState.institute);
+    setVerification(initialState.verification);
+    setCorrectVerification(initialState.correctVerification);
+    setCodeSent(initialState.codeSent);
+    setValid(initialState.valid);
+    setComplete(initialState.complete);
+  };
+
   const checkValidity = () => {
     let isValid = true;
-    if (!emailRegex.test(registrationInfo.email.toLowerCase())) {
+    if (!emailRegex.test(email.toLowerCase())) {
       //console.log(1);
       isValid = false;
     }
-    if (registrationInfo.password.length < 8) {
+    if (password.length < 8) {
       //console.log(2);
       isValid = false;
     }
-    if (registrationInfo.confirmation !== registrationInfo.password) {
+    if (confirmation !== password) {
       //console.log(3);
       isValid = false;
     }
-    if (registrationInfo.name.length === 0) {
+    if (name.length === 0) {
       //console.log(4);
       isValid = false;
     }
-    if (registrationInfo.accountType === "Patient") {
-      if (!birthdayRegex.test(registrationInfo.birthday)) {
+    if (accountType === "Patient") {
+      if (!birthdayRegex.test(birthday)) {
         //console.log(5);
         isValid = false;
       }
-      if (registrationInfo.gender === "") {
+      if (gender === "") {
         //console.log(6);
         isValid = false;
       }
     } else {
-      if (!INSTITUTES.includes(registrationInfo.institute)) {
+      if (!INSTITUTES.includes(institute)) {
         //console.log(7);
         isValid = false;
       }
-      if (
-        registrationInfo.email.substring(
-          registrationInfo.email.length - 4,
-          registrationInfo.email.length
-        ) !== ".edu"
-      ) {
+      if (email.substring(email.length - 4, email.length) !== ".edu") {
         //console.log(8);
         isValid = false;
       }
@@ -80,10 +115,11 @@ const CreateAccountScreen = (props) => {
 
   const checkCompleteness = () => {
     let completeness = false;
+    //console.log(correctVerification);
     if (
       valid &&
-      registrationInfo.correctVerification !== "" &&
-      registrationInfo.verification === registrationInfo.correctVerification
+      correctVerification !== "" &&
+      verification === correctVerification
     ) {
       completeness = true;
     }
@@ -91,87 +127,90 @@ const CreateAccountScreen = (props) => {
   };
 
   const setPatientAccountHandler = () => {
-    if (registrationInfo.accountType === "Professional") {
-      console.log("here");
+    if (accountType === "Professional") {
+      //console.log("here");
       setCodeSent(false);
-      registrationActions.reset();
+      reset();
     }
-    dispatch(registrationActions.switchAccountType("Patient"));
+    setAccountType("Patient");
     checkValidity();
     checkCompleteness();
   };
 
   const setProfessionalAccountHandler = () => {
-    if (registrationInfo.accountType === "Patient") {
+    if (accountType === "Patient") {
       setCodeSent(false);
-      registrationActions.reset();
+      reset();
     }
-    dispatch(registrationActions.switchAccountType("Professional"));
+    setAccountType("Professional");
     checkValidity();
     checkCompleteness();
   };
 
   const enterEmail = (email) => {
-    dispatch(registrationActions.enterEmail(email));
+    setEmail(email);
     checkValidity();
     checkCompleteness();
   };
 
   const enterPassword = (password) => {
-    dispatch(registrationActions.enterPassword(password));
+    setPassword(password);
     checkValidity();
     checkCompleteness();
   };
 
   const enterConfirmation = (confirmation) => {
-    dispatch(registrationActions.enterConfirmationPassword(confirmation));
-    //console.log(
-    //  "check: " + registrationInfo.password + registrationInfo.confirmation
-    //);
+    setConfirmation(confirmation);
     checkValidity();
     checkCompleteness();
   };
 
   const enterName = (name) => {
-    dispatch(registrationActions.enterName(name));
+    setName(name);
     checkValidity();
     checkCompleteness();
   };
 
   const enterInstitute = (institute) => {
-    dispatch(registrationActions.enterInstitute(institute));
+    setInstitute(institute);
     checkValidity();
     checkCompleteness();
   };
 
   const enterBirthday = (birthday) => {
-    dispatch(registrationActions.enterBirthday(birthday));
+    setBirthday(birthday);
     checkValidity();
     checkCompleteness();
   };
 
   const enterGender = (gender) => {
-    dispatch(registrationActions.enterGender(gender));
+    setGender(gender);
     checkValidity();
     checkCompleteness();
   };
 
   const enterVerification = (verification) => {
-    dispatch(registrationActions.enterVerification(verification));
+    setVerification(verification);
     checkValidity();
     checkCompleteness();
   };
 
-  const sendCode = () => {
+  const getCode = async () => {
+    let res = await axios.get("http://143.215.48.171:3000/get_code", {
+      params: { email: email },
+    });
+
+    //console.log(res.data.code);
+
     setCodeSent(true);
-    const dummyCode = "000000";
-    dispatch(registrationActions.setVerification(dummyCode));
+    //const dummyCode = res;
+    setCorrectVerification(res.data.code.toString());
     checkValidity();
     checkCompleteness();
   };
 
   const register = () => {
-    if (registrationInfo.complete) {
+    if (complete) {
       props.navigation.navigate({ routeName: "Success" });
     }
   };
@@ -186,8 +225,8 @@ const CreateAccountScreen = (props) => {
   let birthdayInput = null;
   let genderInput = null;
 
-  if (registrationInfo.gender) {
-    if (registrationInfo.gender.substring(0, 5) === "other") {
+  if (gender) {
+    if (gender.substring(0, 5) === "other") {
       genderSpecify = (
         <RegisterInput
           text="(please specify)"
@@ -195,25 +234,25 @@ const CreateAccountScreen = (props) => {
           onChangeText={(entered) => {
             enterGender("other: " + entered);
           }}
-          value={registrationInfo.gender.substring(7)}
+          value={gender.substring(7)}
           password
         />
       );
     }
   }
 
-  if (registrationInfo.accountType === "Patient") {
+  if (accountType === "Patient") {
     birthdayInput = (
       <RegisterInput
         text="birthday"
         placeholder="mm/dd/yyyy"
         onChangeText={enterBirthday}
-        value={registrationInfo.birthday}
+        value={birthday}
       />
     );
   }
 
-  if (registrationInfo.accountType === "Patient") {
+  if (accountType === "Patient") {
     genderInput = (
       <View>
         <Text
@@ -230,9 +269,7 @@ const CreateAccountScreen = (props) => {
         <View style={styles.radio_input_wrapper}>
           <RadioButton
             value="male"
-            status={
-              registrationInfo.gender === "male" ? "checked" : "unchecked"
-            }
+            status={gender === "male" ? "checked" : "unchecked"}
             onPress={() => {
               enterGender("male");
             }}
@@ -249,9 +286,7 @@ const CreateAccountScreen = (props) => {
           </Text>
           <RadioButton
             value="female"
-            status={
-              registrationInfo.gender === "female" ? "checked" : "unchecked"
-            }
+            status={gender === "female" ? "checked" : "unchecked"}
             onPress={() => {
               enterGender("female");
             }}
@@ -269,8 +304,7 @@ const CreateAccountScreen = (props) => {
           <RadioButton
             value="other"
             status={
-              registrationInfo.gender &&
-              registrationInfo.gender.substring(0, 5) === "other"
+              gender && gender.substring(0, 5) === "other"
                 ? "checked"
                 : "unchecked"
             }
@@ -294,7 +328,7 @@ const CreateAccountScreen = (props) => {
     );
   }
 
-  if (registrationInfo.accountType === "Professional") {
+  if (accountType === "Professional") {
     instituteSelector = (
       <View style={{ width: 270, alignSelf: "center", marginTop: 20 }}>
         <Text
@@ -309,9 +343,7 @@ const CreateAccountScreen = (props) => {
         <SelectDropdown
           data={INSTITUTES}
           defaultButtonText={
-            registrationInfo.institute === ""
-              ? "(select an institute)"
-              : registrationInfo.institute
+            institute === "" ? "(select an institute)" : institute
           }
           buttonStyle={styles.institute_selector}
           buttonTextStyle={styles.institute_selector_text}
@@ -337,40 +369,38 @@ const CreateAccountScreen = (props) => {
             <ScrollView>
               <View style={styles.input_wrapper}>
                 <AccountType
-                  accountType={registrationInfo.accountType}
+                  accountType={accountType}
                   setPatientAccountHandler={setPatientAccountHandler}
                   setProfessionalAccountHandler={setProfessionalAccountHandler}
                 />
                 {instituteSelector}
                 <RegisterInput
                   text={
-                    registrationInfo.accountType === "Patient"
-                      ? "e-mail"
-                      : "institute e-mail"
+                    accountType === "Patient" ? "e-mail" : "institute e-mail"
                   }
                   placeholder=""
                   onChangeText={enterEmail}
-                  value={registrationInfo.email}
+                  value={email}
                 />
                 <RegisterInput
                   text="password"
                   placeholder="(at least 8 characters)"
                   onChangeText={enterPassword}
-                  value={registrationInfo.password}
+                  value={password}
                   password
                 />
                 <RegisterInput
                   text="confirm password"
                   placeholder="(at least 8 characters)"
                   onChangeText={enterConfirmation}
-                  value={registrationInfo.confirmation}
+                  value={confirmation}
                   password
                 />
                 <RegisterInput
                   text="full name"
                   placeholder=""
                   onChangeText={enterName}
-                  value={registrationInfo.name}
+                  value={name}
                 />
                 {birthdayInput}
                 {genderInput}
@@ -383,7 +413,7 @@ const CreateAccountScreen = (props) => {
                     underlineColorAndroid={Colors.studyFindGray}
                     style={styles.verification}
                     onChangeText={enterVerification}
-                    value={registrationInfo.verification}
+                    value={verification}
                   />
                   <TouchableOpacity
                     style={
@@ -391,7 +421,7 @@ const CreateAccountScreen = (props) => {
                         ? styles.resend_button
                         : styles.send_code_button
                     }
-                    onPress={sendCode}
+                    onPress={getCode}
                   >
                     <Text style={styles.send_code_text}>
                       {codeSent ? "RESEND" : "SEND CODE"}
@@ -410,7 +440,7 @@ const CreateAccountScreen = (props) => {
                   <Text>Already have an account? </Text>
                   <TouchableOpacity
                     onPress={() => {
-                      registrationActions.reset();
+                      reset();
                       props.navigation.navigate({ routeName: "Login" });
                     }}
                   >
@@ -532,7 +562,8 @@ const styles = StyleSheet.create({
   },
 
   resend_button: {
-    backgroundColor: Colors.studyFindGray,
+    backgroundColor: Colors.studyFindDarkBlue,
+    borderRadius: 4,
     width: 100,
     height: 33,
     alignContent: "center",
