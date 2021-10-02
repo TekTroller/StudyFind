@@ -18,6 +18,7 @@ contract PatientFactory {
 }
 
 contract Patient {
+
     string public name;
     string public birthday;
     string public gender;

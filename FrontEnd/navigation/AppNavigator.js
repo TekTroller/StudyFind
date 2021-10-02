@@ -1,13 +1,22 @@
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
+// Authorization
 import LoginScreen from "../screens/authentication/LoginScreen";
 import CreateAccountScreen from "../screens/authentication/CreateAccountScreen";
-import PatientRecordsScreen from "../screens/patient/PatientRecordsScreen";
 import SuccessScreen from "../screens/authentication/SuccessScreen";
-import PatientListScreen from "../screens/professional/PatientListScreen";
+
+// Patients
+import PatientRecordsScreen from "../screens/patient/PatientRecordsScreen";
 import NewRecordScreen from "../screens/patient/NewRecordScreen";
+import RecordDetailScreen from "../screens/patient/RecordDetailScreen";
+
+// Professionals
+import PatientListScreen from "../screens/professional/PatientListScreen";
+
+// Other imports
 import Colors from "../assets/Colors";
+import Record from "../models/PatientRecord";
 
 const defaultNavOptions = {
   headerStyle: {
@@ -29,7 +38,11 @@ const LoginNavigator = createStackNavigator(
 );
 
 const PatientNavigator = createStackNavigator(
-  { PatientRecords: PatientRecordsScreen, NewRecord: NewRecordScreen },
+  {
+    PatientRecords: PatientRecordsScreen,
+    NewRecord: NewRecordScreen,
+    RecordDetail: RecordDetailScreen,
+  },
   { defaultNavigationOptions: defaultNavOptions }
 );
 

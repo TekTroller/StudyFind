@@ -22,13 +22,22 @@ const PatientRecordsScreen = (props) => {
     props.navigation.navigate({ routeName: "NewRecord" });
   };
 
+  const showRecordDetailHandler = (record) => {
+    console.log(record);
+    props.navigation.navigate({
+      routeName: "RecordDetail",
+      params: { title: record.title, imageUri: record.imageUri },
+    });
+  };
+
   const deleteRecordHandler = (index) => {
     //console.log(index);
     Alert.alert("Delete Record", "This record will be deleted. Are you sure?", [
       { text: "Cancel" },
       {
         text: "Delete",
-        onPress: (index) => {
+        onPress: () => {
+          //console.log(index);
           dispatch(patientRecordsActions.deleteRecord(index));
         },
       },
@@ -42,6 +51,7 @@ const PatientRecordsScreen = (props) => {
           key={index}
           index={index}
           record={item}
+          showRecordDetailHandler={showRecordDetailHandler}
           deleteRecordHandler={deleteRecordHandler}
         />
       ))}
