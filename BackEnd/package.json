@@ -5,8 +5,10 @@
     "test": "mocha **/tests/*.test.js"
   },
   "dependencies": {
+    "@google-cloud/firestore": "^4.15.1",
     "express": "^4.17.1",
     "ganache-cli": "^6.12.2",
+    "js-sha256": "^0.9.0",
     "nodemailer": "^6.6.3",
     "solc": "^0.8.7",
     "web3": "^1.5.2"
