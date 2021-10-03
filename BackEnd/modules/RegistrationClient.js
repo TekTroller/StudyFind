@@ -73,3 +73,5 @@ class RegistrationClient {
         }
     }
 }
+
+module.exports = RegistrationClient;
