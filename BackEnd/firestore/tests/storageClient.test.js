@@ -1,4 +1,4 @@
-const StorageClient = require('../storageClient');
+const StorageClient = require('../FirestoreClient');
 
 const client = new StorageClient();
 
