@@ -26,21 +26,24 @@ contract LoginDatabase {
         registered_users.push(email);
     }
 
-    function update_password(string memory email, string memory password) public returns (bool) {
+    function update_password(string memory email, string memory password) public {
         require(database[email].personal_database_addr != address(0x0)); // Make sure email is registered
         User storage current = database[email];
         current.password = password;
-        return true;
     }
 
-    function verify(string memory email, string memory password, bool usertype) public view returns (bool) {
+    function verify(string memory email, string memory password, bool usertype) public view returns (address) {
         require(database[email].personal_database_addr != address(0x0)); // Make sure email is registered
         
         string memory expected_password = database[email].password;
         bool expected_usertype = database[email].usertype;
         bool verified = keccak256(bytes(password)) == keccak256(bytes(expected_password));
 
-        return verified && (usertype == expected_usertype);
+        if (verified && (usertype == expected_usertype)) {
+            return database[email].personal_database_addr;
+        } else {
+            return address(0);
+        }
     }
 
     function get_registered_users() public view returns (string[] memory) {
