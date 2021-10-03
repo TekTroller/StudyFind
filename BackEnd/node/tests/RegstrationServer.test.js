@@ -13,6 +13,7 @@ let server;
  */
 const tester_email = 'jlu628@gatech.edu';
 
+/*
 describe('Register Server Test', () => {
     beforeEach(() => {
         server = require('../RegistrationServer');
@@ -114,7 +115,6 @@ describe('Register Server Test', () => {
         assert(!res.data.verified);
     });
 
-    /* 
     it('Request multiple times', async () => {
         const email = 'email_addr@provider.domain';
 
@@ -182,5 +182,6 @@ describe('Register Server Test', () => {
         assert.equal(res.data.reason, 'email not recognized');
         assert.equal(res.data.message, 'Code may have expired, please resend code and try again.');
     }).timeout(310000);
-    */
 });
+
+*/

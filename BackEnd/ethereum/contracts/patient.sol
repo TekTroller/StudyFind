@@ -5,13 +5,18 @@ pragma abicoder v2;
 
 contract PatientFactory {
     address[] public deployedPatients;
+    mapping(string => address) createdPatients;
     
-    function createPatient(string memory fullname, string memory bday, string memory sex) public returns(address){
-        address patientAddress = address(new Patient(fullname, bday, sex));
+    function createPatient(string memory fullname, string memory bday, string memory gndr, string memory identifier) public {
+        address patientAddress = address(new Patient(fullname, bday, gndr));
         deployedPatients.push(patientAddress);
-        return patientAddress;
+        createdPatients[identifier] = patientAddress;
     }
     
+    function getCreatedPatient(string memory identifier) public view returns(address) {
+        return createdPatients[identifier];
+    }
+
     function getDeployedPatients() public view returns (address[] memory) {
         return deployedPatients;
     }
@@ -54,10 +59,10 @@ contract Patient {
         for (uint256 i=0; i < filenames.length; i++) {
             if (keccak256(abi.encodePacked((filenames[i]))) == keccak256(abi.encodePacked((filename)))) {
                 filenames[i] = filenames[filenames.length - 1];
-                filenames.pop();
                 break;
             }
         }
+        filenames.pop();
     }
 
     function change_filename(string memory old_filename, string memory new_filename) public fileExists(old_filename) fileNotExists(new_filename) {
