@@ -16,10 +16,13 @@ class RegistrationClient {
         const infura_provider = 'https://rinkeby.infura.io/v3/124660071809414c801dce8cc1941cae';
         const provider = new WalletProvider(mnemonic, infura_provider);
         const web3 = new Web3(provider);
-        const accounts = await web3.eth.getAccounts();
 
         this.patient_factory = new web3.eth.Contract(PatientFactory.abi, DeployedAddress.PatientFactory);
         this.login_database = new web3.eth.Contract(LoginDatabase.abi, DeployedAddress.login_database);
+    }
+
+    async _init() {
+        const accounts = await web3.eth.getAccounts();
         this.account = accounts[0];
     }
 

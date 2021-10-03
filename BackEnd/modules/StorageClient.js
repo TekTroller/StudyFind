@@ -9,7 +9,7 @@ class StorageClient {
         this.firestore = new FirestoreClient();
     }
 
-    async link_patient(patient_address) {
+    async _init(patient_address) {
         // Ethereum contract
         const mnemonic = 'stairs basic flag mandate split marble oven cliff anxiety trap model morning';
         const infura_provider = 'https://rinkeby.infura.io/v3/124660071809414c801dce8cc1941cae';
