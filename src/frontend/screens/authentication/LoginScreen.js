@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   StyleSheet,
   View,
@@ -9,10 +10,13 @@ import {
   TouchableWithoutFeedback,
   Text,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import Colors from "../../assets/Colors";
 import AccountType from "../../components/AccountType";
+
+import localHost from "../../host";
 
 const LoginScreen = (props) => {
   const [loginEmail, setLoginEmail] = useState("");
@@ -50,21 +54,24 @@ const LoginScreen = (props) => {
     setLoginAccountType("Professional");
   };
 
-  // const verify = async (email, password, isProfessionalAccount) => {
-  //   const verified = await login_database.methods
-  //     .verify(email, password, isProfessionalAccount)
-  //     .call();
-  //   setLoggedIn(verified);
-  // };
-
   const logIn = async () => {
-    if (valid) {
-      //verify(loginEmail, loginPassword, loginAccountType === "Professional");
-      //console.log(verify);
+    var res = await axios.get(localHost + "/login", {
+      params: {
+        email: loginEmail,
+        password: loginPassword,
+        usertype: loginAccountType,
+      },
+    });
+
+    if (res.data.verified === false) {
+      Alert.alert("Wrong Credentials", "Incorrect username or password", [
+        { text: "cancel" },
+      ]);
+    } else {
       if (loginAccountType === "Patient") {
-        props.navigation.navigate({ routeName: "PatientRecords" });
+        props.navigation.navigate({ routeName: "PatientHome" });
       } else {
-        props.navigation.navigate({ routeName: "PatientList" });
+        props.navigation.navigate({ routeName: "ProfessionalHome" });
       }
     }
   };
@@ -140,7 +147,7 @@ const LoginScreen = (props) => {
             }}
           >
             <Text style={{ color: Colors.studyFindBlue }}>
-              Create an account
+              create an account
             </Text>
           </TouchableOpacity>
         </View>

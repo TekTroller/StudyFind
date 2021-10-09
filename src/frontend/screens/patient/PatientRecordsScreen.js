@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 
 import PatientRecord from "../../components/PatientRecord";
+import PatientBottomBar from "../../components/PatientBottomBar";
 import * as patientRecordsActions from "../../store/actions/patientRecords";
 import Colors from "../../assets/Colors";
 
@@ -31,17 +32,21 @@ const PatientRecordsScreen = (props) => {
   };
 
   const deleteRecordHandler = (index) => {
-    //console.log(index);
     Alert.alert("Delete Record", "This record will be deleted. Are you sure?", [
       { text: "Cancel" },
       {
         text: "Delete",
         onPress: () => {
-          //console.log(index);
           dispatch(patientRecordsActions.deleteRecord(index));
         },
       },
     ]);
+  };
+
+  const viewProfileHandler = () => {
+    props.navigation.navigate({
+      routeName: "PatientProfile",
+    });
   };
 
   const records = (
@@ -75,11 +80,16 @@ const PatientRecordsScreen = (props) => {
           />
         </TouchableOpacity>
       </View>
+      <PatientBottomBar
+        pressProfile={viewProfileHandler}
+        screen={"Folder"}
+        style={styles.bottom_bar}
+      />
     </View>
   );
 };
 
-PatientRecordsScreen.navigationOptions = (navData) => {
+PatientRecordsScreen.navigationOptions = () => {
   return {
     headerTitle: "Records",
   };
@@ -94,7 +104,7 @@ const styles = StyleSheet.create({
 
   records_wrapper: {
     width: "100%",
-    height: 400,
+    height: 350,
     alignItems: "center",
     marginTop: 30,
   },
@@ -116,17 +126,8 @@ const styles = StyleSheet.create({
     marginLeft: 2,
   },
 
-  bottom_header: {
-    shadowColor: "#333333",
-    shadowOffset: { width: -1, height: -3 },
-    shadowRadius: 2,
-    shadowOpacity: 0.4,
-    paddingTop: 20,
-    width: "100%",
-    height: 30,
-    borderTopWidth: 2,
-    borderTopColor: ("#333333", 40),
-    justifyContent: "center",
+  bottom_bar: {
+    alignSelf: "flex-end",
   },
 
   panel_header: {

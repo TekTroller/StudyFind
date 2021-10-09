@@ -20,7 +20,7 @@ import RegisterInput from "../../components/RegisterInput";
 import Colors from "../../assets/Colors";
 import INSTITUTES from "../../data/dummy-data";
 
-//import RegistrationClient from "../../../backend/modules/RegistrationClient";
+import localHost from "../../host";
 
 const initialState = {
   email: "",
@@ -32,14 +32,10 @@ const initialState = {
   gender: "",
   institute: "",
   verification: "",
-  //correctVerification: "",
   codeSent: false,
   valid: false,
   complete: false,
 };
-
-const localHost = "http://143.215.57.100:3000";
-//const registrationClient = RegistrationClient(localHost);
 
 const CreateAccountScreen = (props) => {
   const [email, setEmail] = useState(initialState.email);
@@ -69,7 +65,6 @@ const CreateAccountScreen = (props) => {
     setGender(initialState.gender);
     setInstitute(initialState.institute);
     setVerification(initialState.verification);
-    setCorrectVerification(initialState.correctVerification);
     setCodeSent(initialState.codeSent);
     setValid(initialState.valid);
     setComplete(initialState.complete);

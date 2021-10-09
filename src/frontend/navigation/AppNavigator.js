@@ -10,6 +10,7 @@ import SuccessScreen from "../screens/authentication/SuccessScreen";
 import PatientRecordsScreen from "../screens/patient/PatientRecordsScreen";
 import NewRecordScreen from "../screens/patient/NewRecordScreen";
 import RecordDetailScreen from "../screens/patient/RecordDetailScreen";
+import PatientProfileScreen from "../screens/patient/PatientProfileScreen";
 
 // Professionals
 import PatientListScreen from "../screens/professional/PatientListScreen";
@@ -37,11 +38,26 @@ const LoginNavigator = createStackNavigator(
   }
 );
 
-const PatientNavigator = createStackNavigator(
+const PatientRecordNavigator = createStackNavigator(
   {
     PatientRecords: PatientRecordsScreen,
     NewRecord: NewRecordScreen,
     RecordDetail: RecordDetailScreen,
+  },
+  { defaultNavigationOptions: defaultNavOptions }
+);
+
+const PatientProfileNavigator = createStackNavigator(
+  {
+    PatientProfileScreen: PatientProfileScreen,
+  },
+  { defaultNavigationOptions: defaultNavOptions }
+);
+
+const PatientNavigator = createSwitchNavigator(
+  {
+    PatientFolder: PatientRecordNavigator,
+    PatientProfile: PatientProfileNavigator,
   },
   { defaultNavigationOptions: defaultNavOptions }
 );

@@ -10,7 +10,6 @@ import patientRecordsReducer from "./store/reducers/patientRecords";
 import patientListReducer from "./store/reducers/patientList";
 
 enableScreens();
-console.log("here");
 
 const rootReducer = combineReducers({
   authentication: authReducer,

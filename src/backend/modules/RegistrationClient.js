@@ -1,7 +1,6 @@
 const axios = require("axios");
 const sha256 = require("js-sha256").sha256;
-
-const WalletProvider = require("truffle-hdwallet-provider");
+//const WalletProvider = require("truffle-hdwallet-provider");
 const Web3 = require("web3");
 
 const PatientFactory = require("../ethereum/builds/PatientFactory.json");
