@@ -11,6 +11,7 @@ import {
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Keyboard,
+  Alert,
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import SelectDropdown from "react-native-select-dropdown";
@@ -111,10 +112,7 @@ const CreateAccountScreen = (props) => {
   };
 
   const checkCompleteness = () => {
-    let completeness = false;
-    if (valid && verification.length === 6) {
-      completeness = true;
-    }
+    let completeness = valid && verification.length === 6;
     setComplete(completeness);
   };
 
@@ -188,20 +186,38 @@ const CreateAccountScreen = (props) => {
   };
 
   const getCode = async () => {
-    var res = await axios.get(localHost + "/get_code", {
-      params: { email: email },
-    });
+    if (valid) {
+      var res = await axios.get(localHost + "/get_code", {
+        params: { email: email },
+      });
+    } else {
+      Alert.alert(
+        "Insufficient information",
+        "Make sure all blanks are filled",
+        [{ text: "cancel" }]
+      );
+    }
 
-    console.log(res.data.code);
+    //console.log(res.data.code);
 
     setCodeSent(true);
     checkValidity();
     checkCompleteness();
   };
 
-  const register = () => {
-    if (complete) {
+  const register = async () => {
+    var res = await axios.get(localHost + "/verify", {
+      params: { email: email, code: verification },
+    });
+
+    if (res.data.verified) {
       props.navigation.navigate({ routeName: "Success" });
+    } else {
+      Alert.alert(
+        "Incorrect veriification code",
+        "Wrong 6-digit verification code",
+        [{ text: "cancel" }]
+      );
     }
   };
 

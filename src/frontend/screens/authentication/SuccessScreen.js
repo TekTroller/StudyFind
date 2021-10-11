@@ -21,8 +21,10 @@ const SuccessScreen = (props) => {
             width: 300,
             height: 50,
             marginTop: 30,
-            backgroundColor: Colors.studyFindDarkBlue,
+            backgroundColor: Colors.studyFindBlue,
             alignSelf: "center",
+            borderRadius: 4,
+            elevation: 2,
           }}
         >
           <Text

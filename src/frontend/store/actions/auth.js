@@ -1,24 +1,20 @@
-import { acc } from "react-native-reanimated";
-import AccountType from "../../components/AccountType";
-
 export const ENTER_EMAIL = "ENTER_EMAIL";
-export const ENTER_PASSWORD = "ENTER_PASSWORD";
-export const SWITCH_ACCOUNT_TYPE = "SWITCCH_ACCOUNT_TYPE";
-export const AUTHENTICATE = "AUTHENTICATE";
+export const ENTER_ADDRESS = "ENTER_ADDRESS";
+export const SET_ACCOUNT_RETRIEVED = "SET_ACCOUNT_RETRIEVED";
+export const SET_PATIENT_PROFILE = "SET_PATIENT_PROFILE";
 
-export const enterEmail = (email) => {
-  return { type: ENTER_EMAIL, email: email };
+export const enterAccountEmail = (accountEmail) => {
+  return { type: ENTER_EMAIL, accountEmail: accountEmail };
 };
 
-export const enterPassword = (password) => {
-  return { type: ENTER_PASSWORD, password: password };
+export const enterAccountAddress = (accountAddress) => {
+  return { type: ENTER_ADDRESS, accountAddress: accountAddress };
 };
 
-export const switchAccountType = (accountType) => {
-  return { type: SWITCH_ACCOUNT_TYPE, accountType: accountType };
+export const setAccountRetrieved = (accountRetrieved) => {
+  return { type: SET_ACCOUNT_RETRIEVED, accountRetrieved: accountRetrieved };
 };
 
-//Must modify when integrating with the backend
-export const authenticate = () => {
-  return { type: AUTHENTICATE, authenticated: true };
+export const setPatientProfile = (patientProfile) => {
+  return { type: SET_PATIENT_PROFILE, patientProfile: patientProfile };
 };

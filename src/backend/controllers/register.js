@@ -1,6 +1,4 @@
 const nodemailer = require("nodemailer");
-
-const path = require("path");
 const sha256 = require("js-sha256").sha256;
 const web3 = require("../web3");
 
@@ -19,17 +17,6 @@ const transporter = nodemailer.createTransport({
 // Scheduled time out function to delete email
 const expire_time = 300000;
 let codes = new Map();
-
-const patient_factory = new web3.eth.Contract(
-  //JSON.parse(PatientFactory.abi),
-  PatientFactory.abi,
-  DeployedAddress.PatientFactory
-);
-const login_database = new web3.eth.Contract(
-  //JSON.parse(LoginDatabase.abi),
-  LoginDatabase.abi,
-  DeployedAddress.LoginDatabase
-);
 
 const remove = (email) => {
   const addedTime = codes.get(email).time;
@@ -108,6 +95,16 @@ const verify = async (req, res) => {
 
 const register = async (req, res) => {
   const accounts = await web3.eth.getAccounts();
+
+  const patient_factory = new web3.eth.Contract(
+    PatientFactory.abi,
+    DeployedAddress.PatientFactory
+  );
+
+  const login_database = new web3.eth.Contract(
+    LoginDatabase.abi,
+    DeployedAddress.LoginDatabase
+  );
   const account = accounts[0];
 
   const { email, password, usertype, name, birthday, gender } = req.body;

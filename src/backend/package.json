@@ -1,7 +1,8 @@
 {
   "main": "index.js",
   "scripts": {
-    "start": "node index"
+    "start": "node index",
+    "test": "mocha **/tests/*.test.js"
   },
   "dependencies": {
     "@google-cloud/firestore": "^4.15.1",

@@ -1,23 +1,42 @@
 const FirestoreClient = require("../firestore/FirestoreClient");
 
 const Patient = require("../ethereum/builds/Patient.json");
+const DeployedAddress = require("../ethereum/builds/DeployedAddress.json");
 const web3 = require("../web3");
 
 const firestore = new FirestoreClient();
 
 let accounts;
 let account;
-let patient;
 
 beforeEach = async () => {
   accounts = await web3.eth.getAccounts();
-
-  patient = new web3.eth.Contract(Patient.abi, patient_address);
   account = accounts[0];
 };
 
+const getProfile = async (req, res) => {
+  const patient = new web3.eth.Contract(Patient.abi, req.query.address);
+
+  const name = await patient.methods.name().call();
+  const birthday = await patient.methods.birthday().call();
+  const gender = await patient.methods.gender().call();
+  const files = await patient.methods.get_filenames().call();
+
+  const msg = {
+    name: name,
+    birthday: birthday,
+    gender: gender,
+    files: files,
+  };
+
+  res.write(JSON.stringify(msg));
+  res.end();
+};
+
 const uploadFile = async (req, res) => {
-  const { filename, filedata } = req.body;
+  const { filename, filedata, address } = req.body;
+  const patient = new web3.eth.Contract(Patient.abi, address);
+
   const file_token = await firestore.upload(filedata);
 
   try {
@@ -33,6 +52,7 @@ const uploadFile = async (req, res) => {
 const viewFile = async (req, res) => {
   // Retrieve token from ethereum
   const filename = req.query.filename;
+  const patient = new web3.eth.Contract(Patient.abi, req.query.address);
 
   let file_token = "";
   try {
@@ -54,7 +74,8 @@ const viewFile = async (req, res) => {
 
 const deleteFile = async (req, res) => {
   // Delete from blockchain
-  const { filename } = req.body;
+  const { filename, address } = req.body;
+  const patient = new web3.eth.Contract(Patient.abi, address);
 
   try {
     await patient.methods.delete_file(filename).send({
@@ -69,6 +90,7 @@ const deleteFile = async (req, res) => {
   firestore.delete(filename);
 };
 
+exports.getProfile = getProfile;
 exports.uploadFile = uploadFile;
 exports.viewFile = viewFile;
 exports.deleteFile = deleteFile;

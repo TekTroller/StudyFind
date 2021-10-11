@@ -24,7 +24,6 @@ const PatientRecordsScreen = (props) => {
   };
 
   const showRecordDetailHandler = (record) => {
-    console.log(record);
     props.navigation.navigate({
       routeName: "RecordDetail",
       params: { title: record.title, imageUri: record.imageUri },

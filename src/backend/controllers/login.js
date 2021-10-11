@@ -13,25 +13,29 @@ const signIn = async (req, res) => {
   const password = req.query.password;
   const usertype = req.query.usertype;
 
-  let verified;
+  let msg = {
+    address: "0x0000000000000000000000000000000000000000",
+    verified: false,
+  };
+
   try {
-    verified = await login_database.methods
+    const addr = await login_database.methods
       .verify(email, password, usertype)
       .call();
-  } catch (err) {
-    verified = false;
-  }
 
-  const msg = verified
-    ? {
+    if (addr !== "0x0000000000000000000000000000000000000000") {
+      msg = {
+        address: addr,
         verified: true,
-      }
-    : {
-        verified: false,
       };
-
-  res.write(JSON.stringify(msg));
-  res.end();
+    }
+    res.write(JSON.stringify(msg));
+    res.end();
+  } catch (err) {
+    msg = { verify: false };
+    res.write(JSON.stringify(msg));
+    res.end();
+  }
 };
 
 exports.signIn = signIn;

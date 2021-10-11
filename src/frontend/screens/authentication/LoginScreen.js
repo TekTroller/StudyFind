@@ -12,7 +12,9 @@ import {
   Keyboard,
   Alert,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
+import * as authActions from "../../store/actions/auth";
 import Colors from "../../assets/Colors";
 import AccountType from "../../components/AccountType";
 
@@ -26,6 +28,9 @@ const LoginScreen = (props) => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  const authenticationInfo = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
 
   const checkValidity = () => {
     let isValid = true;
@@ -69,6 +74,8 @@ const LoginScreen = (props) => {
       ]);
     } else {
       if (loginAccountType === "Patient") {
+        dispatch(authActions.enterAccountEmail(loginEmail));
+        dispatch(authActions.enterAccountAddress(res.data.address));
         props.navigation.navigate({ routeName: "PatientHome" });
       } else {
         props.navigation.navigate({ routeName: "ProfessionalHome" });

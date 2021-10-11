@@ -15,6 +15,7 @@ router.post("/register", Register.register);
 router.get("/login", Login.signIn);
 
 //patient data routes
+router.get("/patient/get_profile", PatientControllers.getProfile);
 router.get("/patient/view", PatientControllers.viewFile);
 router.post("/patient/upload_file", PatientControllers.uploadFile);
 router.post("/patient/delete_file", PatientControllers.deleteFile);
