@@ -118,14 +118,14 @@ const register = async (req, res) => {
       gas: "5000000",
     });
 
-  const patient_address = await patient_factory.methods
+  const {0: database_addr, 1: controller_addr} = await patient_factory.methods
     .getCreatedPatient(email)
     .call();
 
   // Add credentials into login database
   try {
     await login_database.methods
-      .register(email, password, usertype, patient_address)
+      .register(email, password, usertype, database_addr, controller_addr)
       .send({
         from: account,
         gas: "1000000",

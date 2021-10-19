@@ -15,7 +15,7 @@ const compileContracts = (srcpath) => {
   contracts.forEach(contract => {
     const filepath = path.resolve(__dirname, '../contracts', contract);
     const source = fs.readFileSync(filepath, 'utf-8');
-    sources[filepath] = {content: source};
+    sources[contract] = {content: source};
   })
 
   // Compile source files
@@ -31,13 +31,13 @@ const compileContracts = (srcpath) => {
       }
     };
 
-  const compiledResult = JSON.parse(solc.compile(JSON.stringify(compile_settings))).contracts;
+  const compileResult = JSON.parse(solc.compile(JSON.stringify(compile_settings))).contracts;
 
   // Format compile result for return
   let compiledContracts = {};
-  for (let filepath in compiledResult) {
-    for (let contract in compiledResult[filepath]) {
-      compiledContracts[contract] = compiledResult[filepath][contract];
+  for (let filepath in compileResult) {
+    for (let contract in compileResult[filepath]) {
+      compiledContracts[contract] = compileResult[filepath][contract];
     }
   }
 

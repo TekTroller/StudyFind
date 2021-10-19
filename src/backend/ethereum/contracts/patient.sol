@@ -3,21 +3,29 @@
 pragma solidity >=0.4.22 < 0.9.0;
 pragma abicoder v2;
 
+import './professional.sol';
 
 /**
  * Factory contract for deploying new patient database and controller contracts
  */
 contract PatientFactory {
-    mapping(string => address) private created_patients;
+    struct PatientAddrs {
+        address database;
+        address controller;
+    }
+    mapping(string => PatientAddrs) private created_patients;
     
     function createPatient(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in) public {
         address new_controller = address(new PatientController());
         address new_patient_db = address(new PatientDatabase(name_in, birthday_in, gender_in, email_in, new_controller));
-        created_patients[email_in] = new_patient_db;
+        created_patients[email_in] = PatientAddrs({
+            database: new_patient_db,
+            controller: new_controller
+        });
     }
     
-    function getCreatedPatient(string memory email_in) public view returns(address) {
-        return created_patients[email_in];
+    function getCreatedPatient(string memory email_in) public view returns(address, address) {
+        return (created_patients[email_in].database, created_patients[email_in].controller);
     }
 }
 
@@ -28,10 +36,10 @@ contract PatientFactory {
  */
 contract PatientDatabase {
     // basic infos
-    string public name;
-    string public birthday;
-    string public gender;
-    string public email;
+    string private name;
+    string private birthday;
+    string private gender;
+    string private email;
 
     // the patient controller that manages interaction with this contract
     address private controller;
@@ -42,13 +50,21 @@ contract PatientDatabase {
 
     // data structures to manage accessibility of patient's data
     mapping(address => bool) private has_access;
-    address[] private view_requests;
-    struct professional {
+    mapping(string => address) private authorized_email_to_addr;
+    string[] private authorized_professionals;
+
+    // data structures for users to handle access requests
+    mapping(string => address) private requests_received;
+    string[] private unprocessed_requests;
+
+    // professional information struct
+    struct ProfessionalInfo {
         string name;
         string gender;
+        string email;
         string institution;
     }
-    
+
 
     modifier file_exists(string memory filename) {
         require(bytes(tokens[filename]).length != 0);
@@ -80,6 +96,25 @@ contract PatientDatabase {
         has_access[owner_in] = true;
     }
 
+    // getters for storage variables
+    function get_name() public authorized_restricted view returns (string memory) {
+        return name;
+    }
+    
+    function get_birthday() public authorized_restricted view returns (string memory) {
+        return birthday;
+    }
+
+    function get_gender() public authorized_restricted view returns (string memory) {
+        return gender;
+    }
+
+    function get_email() public authorized_restricted view returns (string memory) {
+        return email;
+    }
+
+
+    // functions related to file management
     function add_file(string memory filename, string memory token) external file_not_exists(filename) owner_restricted {
         filenames.push(filename);
         tokens[filename] = token;
@@ -114,8 +149,84 @@ contract PatientDatabase {
         return filenames;
     }
 
-    function send_view_request() external {
-        
+
+    // functions related to accessibility management
+    function send_view_request(address professional_addr, string memory professional_email) external {
+        require(!has_access[professional_addr]);
+        require(requests_received[professional_email] == address(0));
+
+        unprocessed_requests.push(professional_email);
+        requests_received[professional_email] = professional_addr;
+    }
+
+    function process_request(string memory professional_email, bool approve) external owner_restricted {
+        require(requests_received[professional_email] != address(0));
+
+        has_access[requests_received[professional_email]] = approve;
+        if (approve) {
+            authorized_professionals.push(email);
+            authorized_email_to_addr[email] = requests_received[professional_email];
+        }
+
+        for (uint256 i=0; i < unprocessed_requests.length; i++) {
+            if (keccak256(abi.encodePacked((unprocessed_requests[i]))) == keccak256(abi.encodePacked((professional_email)))) {
+                unprocessed_requests[i] = unprocessed_requests[unprocessed_requests.length - 1];
+                break;
+            }
+        }
+        unprocessed_requests.pop();
+        requests_received[professional_email] = address(0);
+    }
+
+    function ban_professional(string memory professional_email) external owner_restricted {
+        require(has_access[authorized_email_to_addr[professional_email]]);
+
+        has_access[authorized_email_to_addr[professional_email]] = false;
+        authorized_email_to_addr[professional_email] = address(0);
+
+        for (uint256 i=0; i < authorized_professionals.length; i++) {
+            if (keccak256(abi.encodePacked((authorized_professionals[i]))) == keccak256(abi.encodePacked((professional_email)))) {
+                authorized_professionals[i] = authorized_professionals[authorized_professionals.length - 1];
+                break;
+            }
+        }
+        authorized_professionals.pop();
+    }
+
+    function get_unprocessed_requests() external owner_restricted view returns(ProfessionalInfo[] memory) {
+        ProfessionalInfo[] memory professional_requests = new ProfessionalInfo[](unprocessed_requests.length);
+
+        for (uint256 i = 0; i < unprocessed_requests.length; i++) {
+            Professional p = Professional(requests_received[unprocessed_requests[i]]);
+
+            ProfessionalInfo memory p_info = ProfessionalInfo({
+                name: p.get_name(),
+                gender: p.get_gender(),
+                email: p.get_email(),
+                institution: p.get_institution()
+            });
+            professional_requests[i] = p_info;
+        }
+
+        return professional_requests;
+    }
+
+    function get_authorized_professionals() external owner_restricted view returns(ProfessionalInfo[] memory){
+        ProfessionalInfo[] memory authorized = new ProfessionalInfo[](authorized_professionals.length);
+
+        for (uint256 i = 0; i < authorized_professionals.length; i++) {
+            Professional p = Professional(authorized_email_to_addr[authorized_professionals[i]]);
+
+            ProfessionalInfo memory p_info = ProfessionalInfo({
+                name: p.get_name(),
+                gender: p.get_gender(),
+                email: p.get_email(),
+                institution: p.get_institution()
+            });
+            authorized[i] = p_info;
+        }
+
+        return authorized;
     }
 }
 
@@ -161,5 +272,25 @@ contract PatientController {
 
     function get_filenames() external view returns (string[] memory) {
         return database.get_filenames();
+    }
+
+    function send_view_request(address professional_addr, string memory professional_email) external {
+        database.send_view_request(professional_addr, professional_email);
+    }
+
+    function process_request(string memory professional_email, bool approve) external {
+        database.process_request(professional_email, approve);
+    }
+
+    function ban_professional(string memory professional_email) external {
+        database.ban_professional(professional_email);
+    }
+
+    function get_unprocessed_requests() external view returns(PatientDatabase.ProfessionalInfo[] memory) {
+        return database.get_unprocessed_requests();
+    }
+
+    function get_authorized_professionals() external view returns(PatientDatabase.ProfessionalInfo[] memory) {
+        return database.get_authorized_professionals();
     }
 }
