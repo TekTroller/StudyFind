@@ -1,6 +1,6 @@
 const FirestoreClient = require("../firestore/FirestoreClient");
 
-const Patient = require("../ethereum/builds/Patient.json");
+const Patient = require("../ethereum/builds/PatientController.json");
 const DeployedAddress = require("../ethereum/builds/DeployedAddress.json");
 const web3 = require("../web3");
 

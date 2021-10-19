@@ -3,58 +3,93 @@
 pragma solidity >=0.4.22 < 0.9.0;
 pragma abicoder v2;
 
-contract PatientFactory {
-    address[] public deployedPatients;
-    mapping(string => address) createdPatients;
-    
-    function createPatient(string memory fullname, string memory bday, string memory gndr, string memory identifier) public {
-        address patientAddress = address(new Patient(fullname, bday, gndr));
-        deployedPatients.push(patientAddress);
-        createdPatients[identifier] = patientAddress;
-    }
-    
-    function getCreatedPatient(string memory identifier) public view returns(address) {
-        return createdPatients[identifier];
-    }
 
-    function getDeployedPatients() public view returns (address[] memory) {
-        return deployedPatients;
+/**
+ * Factory contract for deploying new patient database and controller contracts
+ */
+contract PatientFactory {
+    mapping(string => address) private created_patients;
+    
+    function createPatient(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in) public {
+        address new_controller = address(new PatientController());
+        address new_patient_db = address(new PatientDatabase(name_in, birthday_in, gender_in, email_in, new_controller));
+        created_patients[email_in] = new_patient_db;
+    }
+    
+    function getCreatedPatient(string memory email_in) public view returns(address) {
+        return created_patients[email_in];
     }
 }
 
-contract Patient {
+
+
+/**
+ * Stores patient information and access tokens for patients' files
+ */
+contract PatientDatabase {
+    // basic infos
     string public name;
     string public birthday;
     string public gender;
-    mapping(string => string) private tokens;
-    string[] filenames;
+    string public email;
 
-    modifier fileExists(string memory filename) {
+    // the patient controller that manages interaction with this contract
+    address private controller;
+
+    // data storage
+    mapping(string => string) private tokens;
+    string[] private filenames;
+
+    // data structures to manage accessibility of patient's data
+    mapping(address => bool) private has_access;
+    address[] private view_requests;
+    struct professional {
+        string name;
+        string gender;
+        string institution;
+    }
+    
+
+    modifier file_exists(string memory filename) {
         require(bytes(tokens[filename]).length != 0);
         _;
     }
 
-    modifier fileNotExists(string memory filename) {
+    modifier file_not_exists(string memory filename) {
         require(bytes(tokens[filename]).length == 0);
         _;
     }
 
-    constructor(string memory fullname, string memory bday, string memory gndr) {
-        name = fullname;
-        birthday = bday;
-        gender = gndr;
+    modifier owner_restricted() {
+        require(msg.sender == address(this));
+        _;
     }
 
-    function add_file(string memory filename, string memory token) public fileNotExists(filename) {
+    modifier authorized_restricted() {
+        require(has_access[msg.sender]);
+        _;
+    }
+
+
+    constructor(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in, address owner_in) {
+        name = name_in;
+        birthday = birthday_in;
+        gender = gender_in;
+        email = email_in;
+        controller = owner_in;
+        has_access[owner_in] = true;
+    }
+
+    function add_file(string memory filename, string memory token) external file_not_exists(filename) owner_restricted {
         filenames.push(filename);
         tokens[filename] = token;
     }
 
-    function view_file(string memory filename) public view fileExists(filename) returns(string memory) {
+    function view_file(string memory filename) external view file_exists(filename) authorized_restricted returns(string memory) {
         return tokens[filename];
     }
 
-    function delete_file(string memory filename) public fileExists(filename) {
+    function delete_file(string memory filename) external file_exists(filename) owner_restricted {
         tokens[filename] = "";
         for (uint256 i=0; i < filenames.length; i++) {
             if (keccak256(abi.encodePacked((filenames[i]))) == keccak256(abi.encodePacked((filename)))) {
@@ -65,7 +100,7 @@ contract Patient {
         filenames.pop();
     }
 
-    function change_filename(string memory old_filename, string memory new_filename) public fileExists(old_filename) fileNotExists(new_filename) {
+    function change_filename(string memory old_filename, string memory new_filename) external file_exists(old_filename) file_not_exists(new_filename) owner_restricted {
         tokens[new_filename] = tokens[old_filename];
         tokens[old_filename] = "";
         for (uint256 i=0; i < filenames.length; i++) {
@@ -75,7 +110,56 @@ contract Patient {
         }
     }
 
-    function get_filenames() public view returns (string[] memory) {
+    function get_filenames() external view authorized_restricted returns (string[] memory) {
         return filenames;
+    }
+
+    function send_view_request() external {
+        
+    }
+}
+
+
+
+/** 
+ * Contract for interaction with patients' database.
+ * Adds a layer of indirection to control accessibility associated with ethereum address thus ensuring security
+*/
+contract PatientController {
+    // ensures the controller only binds with the database contract at deploy time by the factory contract
+    bool private binded;
+
+    // the database contract for this specific patient
+    PatientDatabase private database;
+
+
+    constructor() {
+        binded = false;
+    }
+
+    function bind(address patient_db_addr) external {
+        require(!binded);
+        database = PatientDatabase(patient_db_addr);
+        binded = true;
+    }
+    
+    function add_file(string memory filename, string memory token) external {
+        database.add_file(filename, token);
+    }
+
+    function view_file(string memory filename) external view returns(string memory) {
+        return database.view_file(filename);
+    }
+
+    function delete_file(string memory filename) external {
+        database.delete_file(filename);
+    }
+
+    function change_filename(string memory old_filename, string memory new_filename) external {
+        database.change_filename(old_filename, new_filename);
+    }
+
+    function get_filenames() external view returns (string[] memory) {
+        return database.get_filenames();
     }
 }

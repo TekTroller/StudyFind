@@ -2,26 +2,26 @@ const path = require('path');
 const fs = require('fs-extra');
 const solc = require('solc');
 
+const srcpath = path.resolve(__dirname, '../contracts');
 const buildpath = path.resolve(__dirname, '../builds');
+fs.ensureDirSync(buildpath);
 
 // Build function
-const compileFile = (contract) => {
-  // Clear previous builds
-  try{
-    fs.unlinkSync(path.resolve(buildpath, contract));
-  } catch(error){};
+const compileContracts = (srcpath) => {
+  const contracts = fs.readdirSync(srcpath);
 
-  // Compile source file
-  const filepath = path.resolve(__dirname, '../contracts', contract);
-  const source = fs.readFileSync(filepath, 'utf-8');
+  // Fetch source files
+  let sources = {};
+  contracts.forEach(contract => {
+    const filepath = path.resolve(__dirname, '../contracts', contract);
+    const source = fs.readFileSync(filepath, 'utf-8');
+    sources[filepath] = {content: source};
+  })
 
+  // Compile source files
   const compile_settings = {
       language: 'Solidity',
-      sources: {
-        filepath: {
-          content: source
-        }
-      },
+      sources: sources,
       settings: {
         outputSelection: {
           '*': {
@@ -31,29 +31,43 @@ const compileFile = (contract) => {
       }
     };
 
-  const compiledContracts = JSON.parse(solc.compile(JSON.stringify(compile_settings))).contracts.filepath;
+  const compiledResult = JSON.parse(solc.compile(JSON.stringify(compile_settings))).contracts;
 
-  // Store contract to JSON file
+  // Format compile result for return
+  let compiledContracts = {};
+  for (let filepath in compiledResult) {
+    for (let contract in compiledResult[filepath]) {
+      compiledContracts[contract] = compiledResult[filepath][contract];
+    }
+  }
+
+  return compiledContracts;
+}
+
+
+const clearPreviousBuilds = (compiledContracts) => {
   for (let contract in compiledContracts) {
-      fs.outputJsonSync(
-          path.resolve(buildpath, contract + ".json"),
-          {
-              "matadata": compiledContracts[contract]["metadata"],
-              "abi": compiledContracts[contract]["abi"],
-              "bytecode": compiledContracts[contract]["evm"]["bytecode"]["object"]
-          }
-      );
-      console.log("Contract " + contract + " compiled successfully and stored under builds folder");
+    try{
+      fs.unlinkSync(path.resolve(buildpath, contract + ".json"));
+    } catch(error){};
   }
 }
 
-// Ensure build directory exists
-fs.ensureDirSync(buildpath);
 
-// Fetch source files
-const contracts = fs.readdirSync(path.resolve(__dirname, '../contracts'));
+const storeCompiledContract = (compiledContracts) => {
+  for (let contract in compiledContracts) {
+    fs.outputJsonSync(
+        path.resolve(buildpath, contract + ".json"),
+        {
+            "matadata": compiledContracts[contract]["metadata"],
+            "abi": compiledContracts[contract]["abi"],
+            "bytecode": compiledContracts[contract]["evm"]["bytecode"]["object"]
+        }
+    );
+    console.log("Contract " + contract + " compiled successfully and stored under builds folder");
+  }
+}
 
-// Compile source files
-contracts.forEach(contract => {
-  compileFile(contract);
-})
+const compiledContracts = compileContracts(srcpath);
+clearPreviousBuilds(compiledContracts);
+storeCompiledContract(compiledContracts);
