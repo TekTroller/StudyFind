@@ -17,7 +17,7 @@ contract LoginDatabase {
     string[] public registered_professionals;
 
     function register(string memory email, string memory password, bool usertype, address db_addr, address controller_addr) public {
-        require(database[email].database_addr == address(0x0)); // Make sure email is not yet registered
+        require(database[email].controller_addr == address(0x0)); // Make sure email is not yet registered
 
         User memory new_user = User({
             password: password,

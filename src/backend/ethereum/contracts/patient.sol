@@ -15,16 +15,19 @@ contract PatientFactory {
     }
     mapping(string => PatientAddrs) private created_patients;
     
-    function createPatient(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in) public {
-        address new_controller = address(new PatientController());
+    function create_patient(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in) public {
+        PatientController pc = new PatientController();
+        address new_controller = address(pc);
         address new_patient_db = address(new PatientDatabase(name_in, birthday_in, gender_in, email_in, new_controller));
+
+        pc.bind(new_patient_db);
         created_patients[email_in] = PatientAddrs({
             database: new_patient_db,
             controller: new_controller
         });
     }
     
-    function getCreatedPatient(string memory email_in) public view returns(address, address) {
+    function get_created_patient(string memory email_in) public view returns(address, address) {
         return (created_patients[email_in].database, created_patients[email_in].controller);
     }
 }
@@ -77,7 +80,7 @@ contract PatientDatabase {
     }
 
     modifier owner_restricted() {
-        require(msg.sender == address(this));
+        require(msg.sender == controller);
         _;
     }
 
@@ -87,13 +90,13 @@ contract PatientDatabase {
     }
 
 
-    constructor(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in, address owner_in) {
+    constructor(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in, address controller_in) {
         name = name_in;
         birthday = birthday_in;
         gender = gender_in;
         email = email_in;
-        controller = owner_in;
-        has_access[owner_in] = true;
+        controller = controller_in;
+        has_access[controller_in] = true;
     }
 
     // getters for storage variables
@@ -292,5 +295,21 @@ contract PatientController {
 
     function get_authorized_professionals() external view returns(PatientDatabase.ProfessionalInfo[] memory) {
         return database.get_authorized_professionals();
+    }
+
+    function get_name() public view returns (string memory) {
+        return database.get_name();
+    }
+    
+    function get_birthday() public view returns (string memory) {
+        return database.get_birthday();
+    }
+
+    function get_gender() public view returns (string memory) {
+        return database.get_gender();
+    }
+
+    function get_email() public view returns (string memory) {
+        return database.get_email();
     }
 }

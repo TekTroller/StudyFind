@@ -54,7 +54,7 @@ contract Professional {
     }
 
 
-    function view_patient_file(string memory patient_email, string memory filename) external returns(string memory) {
+    function view_patient_file(string memory patient_email, string memory filename) external view returns(string memory) {
         require(patients_email_to_addr[patient_email] != address(0));
         return PatientDatabase(patients_email_to_addr[patient_email]).view_file(filename);
     }
