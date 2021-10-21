@@ -72,6 +72,10 @@ const LoginScreen = (props) => {
       Alert.alert("Wrong Credentials", "Incorrect username or password", [
         { text: "cancel" },
       ]);
+      if (loginAccountType === "Professional") {
+        //a temporary entry to professional homepage. Delete after implementing Professional accounts
+        props.navigation.navigate({ routeName: "ProfessionalHome" });
+      }
     } else {
       if (loginAccountType === "Patient") {
         dispatch(authActions.enterAccountEmail(loginEmail));
