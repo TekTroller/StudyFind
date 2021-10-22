@@ -200,7 +200,7 @@ contract PatientDatabase {
         ProfessionalInfo[] memory professional_requests = new ProfessionalInfo[](unprocessed_requests.length);
 
         for (uint256 i = 0; i < unprocessed_requests.length; i++) {
-            Professional p = Professional(requests_received[unprocessed_requests[i]]);
+            ProfessionalController p = ProfessionalController(requests_received[unprocessed_requests[i]]);
 
             ProfessionalInfo memory p_info = ProfessionalInfo({
                 name: p.get_name(),
@@ -218,7 +218,7 @@ contract PatientDatabase {
         ProfessionalInfo[] memory authorized = new ProfessionalInfo[](authorized_professionals.length);
 
         for (uint256 i = 0; i < authorized_professionals.length; i++) {
-            Professional p = Professional(authorized_email_to_addr[authorized_professionals[i]]);
+            ProfessionalController p = ProfessionalController(authorized_email_to_addr[authorized_professionals[i]]);
 
             ProfessionalInfo memory p_info = ProfessionalInfo({
                 name: p.get_name(),
@@ -275,10 +275,6 @@ contract PatientController {
 
     function get_filenames() external view returns (string[] memory) {
         return database.get_filenames();
-    }
-
-    function send_view_request(address professional_addr, string memory professional_email) external {
-        database.send_view_request(professional_addr, professional_email);
     }
 
     function process_request(string memory professional_email, bool approve) external {

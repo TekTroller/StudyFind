@@ -6,7 +6,23 @@ pragma abicoder v2;
 import './patient.sol';
 import './login_database.sol';
 
-contract Professional {
+contract ProfessionalFactory {
+    mapping(string => address) private created_professional;
+
+    function create_professional(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in, string memory institution_in) public {
+        ProfessionalController pc = new ProfessionalController(name_in, birthday_in, gender_in, email_in, institution_in);
+        address new_controller = address(pc);
+        created_professional[email_in] = new_controller;
+    }
+
+    function get_created_professional(string memory email) public view returns(address) {
+        return created_professional[email];
+    }
+
+}
+
+
+contract ProfessionalController {
     address login_db_address = 0x07a3159b37F5e7f448419cbb324089Eee2fb6498;
 
     string private name;
