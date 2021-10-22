@@ -66,7 +66,7 @@ class RegistrationClient {
 
     // Patient contract creation
     await this.patient_factory.methods
-      .createPatient(name, birthday, gender, identifier)
+      .createPatient(name, birthday, gender, email, identifier)
       .send({
         from: this.account,
         gas: "5000000",

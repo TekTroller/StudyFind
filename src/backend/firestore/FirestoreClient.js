@@ -3,7 +3,7 @@ const path = require("path");
 const sha256 = require("js-sha256").sha256;
 
 // Ethereum contracts imports
-const Patient = require("../ethereum/builds/Patient.json");
+const Patient = require("../ethereum/builds/PatientController.json");
 const WalletProvider = require("truffle-hdwallet-provider");
 const Web3 = require("web3");
 
