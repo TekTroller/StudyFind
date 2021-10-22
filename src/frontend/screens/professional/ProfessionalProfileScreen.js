@@ -42,7 +42,7 @@ const ProfessionalProfileScreen = (props) => {
   );
 };
 
-PatientProfileScreen.navigationOptions = () => {
+ProfessionalProfileScreen.navigationOptions = () => {
   return {
     headerTitle: "Patient Profile",
   };
