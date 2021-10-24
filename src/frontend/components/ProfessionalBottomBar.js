@@ -9,7 +9,7 @@ const ProfessionalBottomBar = (props) => {
     <View style={styles.wrapper}>
       <TouchableOpacity style={styles.icon_wrapper} onPress={props.pressFolder}>
         <Ionicons
-          name={props.screen === "Folder" ? "folder" : "folder-outline"}
+          name={props.screen === "Folder" ? "list" : "list-outline"}
           color={props.screen === "Folder" ? Colors.studyFindBlue : "white"}
           size={40}
         />
