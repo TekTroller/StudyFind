@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
-import PatientBottomBar from "../../components/PatientBottomBar";
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
 import PatientProfile from "../../models/PatientProfile";
@@ -62,7 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    height: 635,
+    height: 598,
     width: "100%",
   },
   icon: {
