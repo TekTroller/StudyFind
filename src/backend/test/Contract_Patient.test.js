@@ -1,5 +1,4 @@
 const assert = require('assert');
-const sha256 = require('js-sha256').sha256;
 
 const ganache = require('ganache-cli');
 const Web3 = require('web3');
@@ -31,8 +30,6 @@ beforeEach(async() => {
         });
 
     // create patient
-
-
     await patient_factory.methods.create_patient(name_init, birthday_init, gender_init, email_init).send({
         from: accounts[0],
         gas: '5000000'

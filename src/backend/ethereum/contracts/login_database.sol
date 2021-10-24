@@ -35,13 +35,13 @@ contract LoginDatabase {
     }
 
     function update_password(string memory email, string memory password) public {
-        require(database[email].database_addr != address(0x0)); // Make sure email is registered
+        require(database[email].controller_addr != address(0x0)); // Make sure email is registered
         User storage current = database[email];
         current.password = password;
     }
 
     function verify(string memory email, string memory password, bool usertype) public view returns (address) {
-        require(database[email].database_addr != address(0x0)); // Make sure email is registered
+        require(database[email].controller_addr != address(0x0)); // Make sure email is registered
         
         string memory expected_password = database[email].password;
         bool expected_usertype = database[email].usertype;
