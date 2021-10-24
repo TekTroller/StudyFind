@@ -1,25 +1,19 @@
 const FirestoreClient = require("../firestore/FirestoreClient");
-
-const Patient = require("../ethereum/builds/PatientController.json");
-const DeployedAddress = require("../ethereum/builds/DeployedAddress.json");
-const web3 = require("../web3");
-
 const firestore = new FirestoreClient();
 
-let accounts;
-let account;
+const Patient = require("../ethereum/builds/PatientController.json");
+const web3 = require("../web3");
 
-beforeEach = async () => {
-  accounts = await web3.eth.getAccounts();
-  account = accounts[0];
-};
+
+let account;
+web3.eth.getAccounts().then(accounts => {account = accounts[0]});
 
 const getProfile = async (req, res) => {
   const patient = new web3.eth.Contract(Patient.abi, req.query.address);
 
-  const name = await patient.methods.name().call();
-  const birthday = await patient.methods.birthday().call();
-  const gender = await patient.methods.gender().call();
+  const name = await patient.methods.get_name().call();
+  const birthday = await patient.methods.get_birthday().call();
+  const gender = await patient.methods.get_gender().call();
   const files = await patient.methods.get_filenames().call();
 
   const msg = {
@@ -90,7 +84,78 @@ const deleteFile = async (req, res) => {
   firestore.delete(filename);
 };
 
+const changeFileName = async (req, res) => {
+  const { oldFilename, newFilename, address } = req.body;
+  const patient = new web3.eth.Contract(Patient.abi, address);
+
+  try {
+    await patient.methods.change_filename(oldFilename, newFilename).send({
+      from: account,
+      gas: "5000000",
+    });
+  } catch (err) {
+    throw new Error("File does not exist");
+  }
+}
+
+const processRequest = async (req ,res) => {
+  const { professional_email, approve, address } = req.body;
+  const patient = new web3.eth.Contract(Patient.abi, address);
+
+  try {
+    await patient.methods.process_request(professional_email, approve).send({
+      from: account,
+      gas: "5000000",
+    });
+  } catch (err) {
+    throw new Error("Something went wrong");
+  }
+}
+
+const banProfessional = async (req ,res) => {
+  const { professional_email, address } = req.body;
+  const patient = new web3.eth.Contract(Patient.abi, address);
+
+  try {
+    await patient.methods.ban_professional(professional_email, approve).send({
+      from: account,
+      gas: "5000000",
+    });
+  } catch (err) {
+    throw new Error("Something went wrong");
+  }
+}
+
+const getPendingRequests = async (req ,res) => {
+  const { address } = req.body;
+  const patient = new web3.eth.Contract(Patient.abi, address);
+
+  const pending_requests = await patient.methods.get_pending_requests().call();
+
+  res.write(JSON.stringify({
+    requests: pending_requests
+  }));
+  res.end();
+}
+
+const getAuthorizedProfessionals = async (req, res) => {
+  const patient = new web3.eth.Contract(Patient.abi, address);
+
+  const authorized_professionals = await patient.methods.get_authorized_professionals().call();
+
+  res.write(JSON.stringify({
+    authorized: authorized_professionals
+  }));
+  res.end();
+}
+
+
 exports.getProfile = getProfile;
 exports.uploadFile = uploadFile;
 exports.viewFile = viewFile;
 exports.deleteFile = deleteFile;
+exports.changeFileName = changeFileName;
+exports.processRequest = processRequest;
+exports.banProfessional = banProfessional;
+exports.getPendingRequests = getPendingRequests;
+exports.getAuthorizedProfessionals = getAuthorizedProfessionals;
