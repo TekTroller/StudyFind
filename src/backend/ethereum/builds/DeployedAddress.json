@@ -1,4 +1,5 @@
 {
-  "LoginDatabase": "0x07a3159b37F5e7f448419cbb324089Eee2fb6498",
-  "PatientFactory": "0xD7D512B2aa44D0E732bA633dd30e3e7731cbB26F"
+  "LoginDatabase": "0x777473101A977500A5E8101e376d3F9f786977b2",
+  "PatientFactory": "0xD93cD29e5b69Ce067Ac292a1aB84989495B98635",
+  "ProfessionalFactory": "0xc9851a54aB4E168C3F8C56702dEA0a66fd1aaE72"
 }
