@@ -42,11 +42,11 @@ const ProfessionalProfileScreen = (props) => {
       }
     };
   
-    const viewFolderHandler = () => {
-      props.navigation.navigate({
-        routeName: "ProfessionalFolder",
-      });
-    };
+    // const viewFolderHandler = () => {
+    //   props.navigation.navigate({
+    //     routeName: "ProfessionalFolder",
+    //   });
+    // };
   
     useEffect(() => {
       updateProfile();
