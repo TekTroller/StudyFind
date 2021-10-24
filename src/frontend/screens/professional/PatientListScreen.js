@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 
+import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
 import Colors from "../../assets/Colors";
 import PatientProfileRow from "../../components/PatientProfileRow";
 import * as patientListActions from "../../store/actions/patientList";
@@ -68,6 +69,12 @@ const PatientListScreen = (props) => {
     }
   };
 
+  const viewProfileHandler = () => {
+    props.navigation.navigate({
+      routeName: "ProfessionalProfileScreen",
+    });
+  };
+
   const patients = (
     <ScrollView contentContainerStyle={styles.patient_list_wrapper}>
       {filter.map((item, index) => (
@@ -101,6 +108,11 @@ const PatientListScreen = (props) => {
           </View>
           {patients}
         </View>
+        <ProfessionalBottomBar
+          pressProfile={viewProfileHandler}
+          screen={"Folder"}
+          style={styles.bottom_bar}
+        />
       </View>
     </TouchableWithoutFeedback>
   );

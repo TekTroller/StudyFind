@@ -5,6 +5,7 @@ import { StyleSheet, View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
+import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
 import PatientBottomBar from "../../components/PatientBottomBar";
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
@@ -13,14 +14,11 @@ import PatientProfile from "../../models/PatientProfile";
 import localHost from "../../host";
 
 const ProfessionalProfileScreen = (props) => {
-  /*  TODO
-    2 steps:
-        1. Study React redux, read and edit store/actions/auth.js, store/reducers/auth.js 
-        file to explore how to receive professional profile data from processing. 
-        Read screens/patient/PatientProfileScreen for a similar example.
-        **useEffect hook recommended.**
-        2. render professional profile data. Check updateProfile() function in screens/patient/PatientProfileScreen ;
-    */
+  const viewPatientListHandler = () => {
+    props.navigation.navigate({
+      routeName: "PatientList",
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -33,9 +31,9 @@ const ProfessionalProfileScreen = (props) => {
           style={styles.icon}
         />
       </View>
-      <PatientBottomBar
+      <ProfessionalBottomBar
         screen={"Profile"}
-        pressFolder={viewFolderHandler}
+        pressFolder={viewPatientListHandler}
         style={styles.bottom_bar}
       />
     </View>
@@ -44,7 +42,7 @@ const ProfessionalProfileScreen = (props) => {
 
 ProfessionalProfileScreen.navigationOptions = () => {
   return {
-    headerTitle: "Patient Profile",
+    headerTitle: "Professional Profile",
   };
 };
 

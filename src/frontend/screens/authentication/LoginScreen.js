@@ -64,7 +64,7 @@ const LoginScreen = (props) => {
       params: {
         email: loginEmail,
         password: loginPassword,
-        usertype: loginAccountType,
+        usertype: (loginAccountType === "Professional").toString(),
       },
     });
 
@@ -72,16 +72,14 @@ const LoginScreen = (props) => {
       Alert.alert("Wrong Credentials", "Incorrect username or password", [
         { text: "cancel" },
       ]);
-      if (loginAccountType === "Professional") {
-        //a temporary entry to professional homepage. Delete after implementing Professional accounts
-        props.navigation.navigate({ routeName: "ProfessionalHome" });
-      }
     } else {
       if (loginAccountType === "Patient") {
         dispatch(authActions.enterAccountEmail(loginEmail));
         dispatch(authActions.enterAccountAddress(res.data.address));
         props.navigation.navigate({ routeName: "PatientHome" });
       } else {
+        dispatch(authActions.enterAccountEmail(loginEmail));
+        dispatch(authActions.enterAccountAddress(res.data.address));
         props.navigation.navigate({ routeName: "ProfessionalHome" });
       }
     }
