@@ -5,6 +5,7 @@ import { StyleSheet, View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
+import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
 import PatientBottomBar from "../../components/PatientBottomBar";
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
@@ -22,6 +23,12 @@ const ProfessionalProfileScreen = (props) => {
         2. render professional profile data. Check updateProfile() function in screens/patient/PatientProfileScreen ;
     */
 
+  const viewFolderHandler = () => {
+    props.navigation.navigate({
+    routeName: "PatientList",
+    });
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={("black", 60)} />
@@ -33,7 +40,7 @@ const ProfessionalProfileScreen = (props) => {
           style={styles.icon}
         />
       </View>
-      <PatientBottomBar
+      <ProfessionalBottomBar
         screen={"Profile"}
         pressFolder={viewFolderHandler}
         style={styles.bottom_bar}
@@ -44,7 +51,7 @@ const ProfessionalProfileScreen = (props) => {
 
 ProfessionalProfileScreen.navigationOptions = () => {
   return {
-    headerTitle: "Patient Profile",
+    headerTitle: "Professional Profile",
   };
 };
 
