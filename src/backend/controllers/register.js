@@ -3,6 +3,7 @@ const sha256 = require("js-sha256").sha256;
 const web3 = require("../web3");
 
 const PatientFactory = require("../ethereum/builds/PatientFactory.json");
+const ProfessionalFactory = require("../ethereum/builds/ProfessionalFactory.json");
 const LoginDatabase = require("../ethereum/builds/LoginDatabase.json");
 const DeployedAddress = require("../ethereum/builds/DeployedAddress.json");
 
@@ -94,46 +95,88 @@ const verify = async (req, res) => {
 };
 
 const register = async (req, res) => {
+  const {
+    email,
+    password,
+    usertype,
+    name,
+    birthday,
+    gender,
+    institution,
+  } = req.body;
+  let db_addr = "0x0000000000000000000000000000000000000000",
+    controller_addr = "0x0000000000000000000000000000000000000000";
   const accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
+  let flag = true;
 
-  const patient_factory = new web3.eth.Contract(
-    PatientFactory.abi,
-    DeployedAddress.PatientFactory
-  );
+  if (!usertype) {
+    // Patient register
+    const patient_factory = new web3.eth.Contract(
+      PatientFactory.abi,
+      DeployedAddress.PatientFactory
+    );
+    try {
+      // deploy new patient contracts
+      await patient_factory.methods
+        .create_patient(name, birthday, gender, email)
+        .send({
+          from: account,
+          gas: "5000000",
+        });
+
+      const {
+        0: patient_db_addr,
+        1: patient_controller_addr,
+      } = await patient_factory.methods.get_created_patient(email).call();
+
+      db_addr = patient_db_addr;
+      controller_addr = patient_controller_addr;
+    } catch (err) {
+      flag = false;
+    }
+  } else {
+    // Professional registration
+    const professional_factory = new web3.eth.Contract(
+      ProfessionalFactory.abi,
+      DeployedAddress.ProfessionalFactory
+    );
+
+    // deploy new professional contract
+    try {
+      await professional_factory.methods
+        .create_professional(name, birthday, gender, email, institution)
+        .send({
+          from: account,
+          gas: "5000000",
+        });
+
+      const professional_controller_addr = await professional_factory.methods
+        .get_created_professional(email)
+        .call();
+      controller_addr = professional_controller_addr;
+    } catch (err) {
+      flag = false;
+    }
+  }
 
   const login_database = new web3.eth.Contract(
     LoginDatabase.abi,
     DeployedAddress.LoginDatabase
   );
-  const account = accounts[0];
 
-  const { email, password, usertype, name, birthday, gender } = req.body;
-
-
-  // Patient contract creation
-  await patient_factory.methods
-    .createPatient(name, birthday, gender, email)
+  await login_database.methods
+    .register(email, password, usertype, db_addr, controller_addr)
     .send({
       from: account,
-      gas: "5000000",
+      gas: "1000000",
     });
 
-  const {0: database_addr, 1: controller_addr} = await patient_factory.methods
-    .getCreatedPatient(email)
-    .call();
-
-  // Add credentials into login database
-  try {
-    await login_database.methods
-      .register(email, password, usertype, database_addr, controller_addr)
-      .send({
-        from: account,
-        gas: "1000000",
-      });
-    res.status(201).json({ success: true });
-  } catch (err) {
-    throw new Error("Email already registered");
-  }
+  const msg = {
+    success: flag,
+  };
+  res.write(JSON.stringify(msg));
+  res.end();
 };
 
 exports.test = test;

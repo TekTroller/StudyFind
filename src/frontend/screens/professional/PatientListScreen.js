@@ -71,7 +71,7 @@ const PatientListScreen = (props) => {
 
   const viewProfileHandler = () => {
     props.navigation.navigate({
-    routeName: "ProfessionalProfileScreen",
+      routeName: "ProfessionalProfileScreen",
     });
   };
 

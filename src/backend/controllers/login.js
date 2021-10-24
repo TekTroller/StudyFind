@@ -11,7 +11,7 @@ const signIn = async (req, res) => {
 
   const email = req.query.email;
   const password = req.query.password;
-  const usertype = req.query.usertype;
+  const usertype = req.query.usertype === "true";
 
   let msg = {
     address: "0x0000000000000000000000000000000000000000",

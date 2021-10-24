@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
+import PatientBottomBar from "../../components/PatientBottomBar";
+
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
 import ProfessionalProfile from "../../models/ProfessionalProfile";
@@ -82,7 +84,7 @@ const ProfessionalProfileScreen = (props) => {
       </View>
       <ProfessionalBottomBar
         screen={"Profile"}
-        pressFolder={viewFolderHandler}
+        pressFolder={viewPatientListHandler}
         style={styles.bottom_bar}
       />
     </View>
