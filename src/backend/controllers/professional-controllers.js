@@ -17,7 +17,7 @@ const getProfile = async (req, res) => {
     const patient_emails = await professional.methods.get_patients();
     const patients = [];
 
-    patient_emails.forEach(p_email => {
+    patient_emails.forEach(async (p_email) => {
         const p_info = await professional.methods.get_patient_info(p_email).call();
         patients.push(p_info);
     });
