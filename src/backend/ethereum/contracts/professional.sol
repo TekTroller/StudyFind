@@ -41,6 +41,13 @@ contract ProfessionalController {
     string[] pending_requests;
     string[] patients;
 
+    struct PatientInfo {
+        string name;
+        string birthday;
+        string gender;
+        string[] filenames;
+    }
+
 
     constructor(string memory name_in, string memory birthday_in, string memory gender_in, string memory email_in, string memory institution_in, address login_db_address_in) {
         name = name_in;
@@ -85,6 +92,19 @@ contract ProfessionalController {
     function get_patient_filenames(string memory patient_email) external view returns(string[] memory) {
         require(patient_addrs[patient_email] != address(0));
         return PatientDatabase(patient_addrs[patient_email]).get_filenames();
+    }
+
+    function get_patient_info(string memory patient_email) external view returns(PatientInfo memory) {
+        require(patient_addrs[patient_email] != address(0));
+        address patient_addr = patient_addrs[patient_email];
+        PatientDatabase p = PatientDatabase(patient_addr);
+        PatientInfo memory p_info = PatientInfo({
+            name: p.get_name(),
+            birthday: p.get_birthday(),
+            gender: p.get_gender(),
+            filenames: p.get_filenames()
+        });
+        return p_info;
     }
 
     function request_access(string memory patient_email) external {
