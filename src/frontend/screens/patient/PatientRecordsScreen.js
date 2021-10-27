@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -9,15 +9,50 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import PatientRecord from "../../components/PatientRecord";
 import PatientBottomBar from "../../components/PatientBottomBar";
 import * as patientRecordsActions from "../../store/actions/patientRecords";
+import * as authActions from "../../store/actions/auth";
+import PatientProfile from "../../models/PatientProfile";
 import Colors from "../../assets/Colors";
+
+import localHost from "../../host";
 
 const PatientRecordsScreen = (props) => {
   const patientRecordsInfo = useSelector((state) => state.patientRecords);
+  const authenticationInfo = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
+  let patientProfile = authenticationInfo.patientProfile;
+  //console.log(authenticationInfo.accountAddress);
+
+  const updateProfile = async () => {
+    if (patientProfile === null) {
+      try {
+        var res = await axios.get(localHost + "/patient/get_profile", {
+          params: {
+            address: authenticationInfo.accountAddress,
+          },
+        });
+
+        console.log(authenticationInfo.accountAddress);
+        console.log(res);
+
+        patientProfile = new PatientProfile(
+          res.data.name,
+          res.data.birthday,
+          res.data.gender
+        );
+
+        dispatch(authActions.setPatientProfile(patientProfile));
+        dispatch(authActions.setAccountRetrieved(true));
+        console.log(res.data.files);
+      } catch (err) {
+        console.log("error");
+      }
+    }
+  };
 
   const showAddOptions = () => {
     props.navigation.navigate({ routeName: "NewRecord" });
@@ -47,6 +82,10 @@ const PatientRecordsScreen = (props) => {
       routeName: "PatientProfile",
     });
   };
+
+  useEffect(() => {
+    updateProfile();
+  });
 
   const records = (
     <ScrollView contentContainerStyle={styles.records_wrapper}>

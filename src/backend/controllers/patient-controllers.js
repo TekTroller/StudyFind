@@ -16,21 +16,30 @@ beforeEach = async () => {
 
 const getProfile = async (req, res) => {
   const patient = new web3.eth.Contract(Patient.abi, req.query.address);
+  console.log(patient.methods);
 
-  const name = await patient.methods.name().call();
-  const birthday = await patient.methods.birthday().call();
-  const gender = await patient.methods.gender().call();
-  const files = await patient.methods.get_filenames().call();
+  try {
+    const name = await patient.methods.get_name().call();
+    const birthday = await patient.methods.get_birthday().call();
+    const gender = await patient.methods.get_gender().call();
+    const files = await patient.methods.get_filenames().call();
 
-  const msg = {
-    name: name,
-    birthday: birthday,
-    gender: gender,
-    files: files,
-  };
+    const msg = {
+      name: name,
+      birthday: birthday,
+      gender: gender,
+      files: files,
+    };
 
-  res.write(JSON.stringify(msg));
-  res.end();
+    res.write(JSON.stringify(msg));
+    res.end();
+  } catch (err) {
+    const msg = {
+      status: "error",
+    };
+    res.write(JSON.stringify(msg));
+    res.end();
+  }
 };
 
 const uploadFile = async (req, res) => {

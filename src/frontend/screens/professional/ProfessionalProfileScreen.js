@@ -6,15 +6,65 @@ import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
-import PatientBottomBar from "../../components/PatientBottomBar";
+
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
-import PatientProfile from "../../models/PatientProfile";
+import ProfessionalProfile from "../../models/ProfessionalProfile";
 
 import localHost from "../../host";
 
 const ProfessionalProfileScreen = (props) => {
-  const viewPatientListHandler = () => {
+  /*  TODO
+    2 steps:
+        1. Study React redux, read and edit store/actions/auth.js, store/reducers/auth.js 
+        file to explore how to receive professional profile data from processing. 
+        Read screens/patient/PatientProfileScreen for a similar example.
+        **useEffect hook recommended.**
+        2. render professional profile data. Check updateProfile() function in screens/patient/PatientProfileScreen ;
+    */
+  const authenticationInfo = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
+  let professionalProfile = authenticationInfo.professionalProfile;
+
+  const updateProfile = async () => {
+    if (patientProfile === null) {
+      var res = await axios.get(localHost + "/professional/get_profile", {
+        params: {
+          address: authenticationInfo.accountAddress,
+        },
+      });
+
+      professionalProfile = new ProfessionalProfile(
+        res.data.name,
+        res.data.institute
+      );
+      dispatch(authActions.setProfessionalProfile(professionalProfile));
+      dispatch(authActions.setAccountRetrieved(true));
+    }
+  };
+
+  // const viewFolderHandler = () => {
+  //   props.navigation.navigate({
+  //     routeName: "ProfessionalFolder",
+  //   });
+  // };
+
+  useEffect(() => {
+    updateProfile();
+  });
+
+  let info = null;
+  if (patientProfile !== null) {
+    info = (
+      <View>
+        <View style={styles.text_wrapper}>
+          <Text style={styles.text}>{"Name: " + patientProfile.name}</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const viewFolderHandler = () => {
     props.navigation.navigate({
       routeName: "PatientList",
     });
@@ -53,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    height: 635,
+    height: 598,
     width: "100%",
   },
   icon: {
