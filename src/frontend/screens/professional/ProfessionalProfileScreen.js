@@ -6,6 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
+<<<<<<< HEAD
+=======
+import PatientBottomBar from "../../components/PatientBottomBar";
+>>>>>>> 562fe34dbd7a606bf312655df189ee2ca535c79f
 
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
@@ -22,6 +26,7 @@ const ProfessionalProfileScreen = (props) => {
         **useEffect hook recommended.**
         2. render professional profile data. Check updateProfile() function in screens/patient/PatientProfileScreen ;
     */
+<<<<<<< HEAD
   const authenticationInfo = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
   let professionalProfile = authenticationInfo.professionalProfile;
@@ -63,10 +68,53 @@ const ProfessionalProfileScreen = (props) => {
       </View>
     );
   }
+=======
+    const authenticationInfo = useSelector((state) => state.authentication);
+    const dispatch = useDispatch();
+    let professionalProfile = authenticationInfo.professionalProfile;
+  
+    const updateProfile = async () => {
+      if (patientProfile === null) {
+        var res = await axios.get(localHost + "/professional/get_profile", {
+          params: {
+            address: authenticationInfo.accountAddress,
+          },
+        });
+  
+        professionalProfile = new ProfessionalProfile(
+          res.data.name,
+          res.data.institute
+        );
+        dispatch(authActions.setProfessionalProfile(professionalProfile));
+        dispatch(authActions.setAccountRetrieved(true));
+      }
+    };
+  
+    // const viewFolderHandler = () => {
+    //   props.navigation.navigate({
+    //     routeName: "ProfessionalFolder",
+    //   });
+    // };
+  
+    useEffect(() => {
+      updateProfile();
+    });
+  
+    let info = null;
+    if (patientProfile !== null) {
+      info = (
+        <View>
+          <View style={styles.text_wrapper}>
+            <Text style={styles.text}>{"Name: " + patientProfile.name}</Text>
+          </View>
+        </View>
+      );
+    }  
+>>>>>>> 562fe34dbd7a606bf312655df189ee2ca535c79f
 
   const viewFolderHandler = () => {
     props.navigation.navigate({
-      routeName: "PatientList",
+    routeName: "PatientList",
     });
   };
 

@@ -163,14 +163,17 @@ contract PatientDatabase {
     }
 
     function process_request(string memory professional_email, bool approve) external owner_restricted {
-        require(requests_received[professional_email] != address(0));
+        address professional_addr = requests_received[professional_email];
+        require(professional_addr != address(0));
 
-        has_access[requests_received[professional_email]] = approve;
+        has_access[professional_addr] = approve;
         if (approve) {
-            authorized_professionals.push(email);
-            authorized_email_to_addr[email] = requests_received[professional_email];
+            authorized_professionals.push(professional_email);
+            authorized_email_to_addr[professional_email] = professional_addr;
         }
+        ProfessionalController(requests_received[professional_email]).process_request(email, address(this), approve);
 
+        // remove from unprocessed_requests array
         for (uint256 i=0; i < unprocessed_requests.length; i++) {
             if (keccak256(abi.encodePacked((unprocessed_requests[i]))) == keccak256(abi.encodePacked((professional_email)))) {
                 unprocessed_requests[i] = unprocessed_requests[unprocessed_requests.length - 1];
@@ -184,6 +187,7 @@ contract PatientDatabase {
     function ban_professional(string memory professional_email) external owner_restricted {
         require(has_access[authorized_email_to_addr[professional_email]]);
 
+        ProfessionalController(authorized_email_to_addr[professional_email]).delete_patient(email);
         has_access[authorized_email_to_addr[professional_email]] = false;
         authorized_email_to_addr[professional_email] = address(0);
 
