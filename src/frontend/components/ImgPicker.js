@@ -51,10 +51,12 @@ const ImgPicker = (props) => {
     const image = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
+      base64: true,
     });
 
+    console.log(image);
     setPickedImage(image.uri);
-    props.onImageTaken(image.uri);
+    props.onImageTaken(image.base64);
   };
 
   const selectImageHandler = async () => {
@@ -70,7 +72,7 @@ const ImgPicker = (props) => {
     });
 
     setPickedImage(image.uri);
-    props.onImageTaken(image.uri);
+    props.onImageTaken(image.base64);
   };
 
   return (
@@ -102,7 +104,7 @@ const ImgPicker = (props) => {
         onPress={takeImageHandler}
       >
         <Ionicons
-          name="camera-outline"
+          name="camera"
           color="black"
           size={30}
           style={{ marginLeft: 10, marginRight: 10 }}
@@ -131,7 +133,7 @@ const ImgPicker = (props) => {
         onPress={selectImageHandler}
       >
         <Ionicons
-          name="image-outline"
+          name="image"
           color="black"
           size={30}
           style={{ marginLeft: 10, marginRight: 20 }}

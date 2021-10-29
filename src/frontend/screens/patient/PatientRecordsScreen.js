@@ -16,6 +16,7 @@ import PatientBottomBar from "../../components/PatientBottomBar";
 import * as patientRecordsActions from "../../store/actions/patientRecords";
 import * as authActions from "../../store/actions/auth";
 import PatientProfile from "../../models/PatientProfile";
+import Record from "../../models/PatientRecord";
 import Colors from "../../assets/Colors";
 
 import localHost from "../../host";
@@ -25,7 +26,7 @@ const PatientRecordsScreen = (props) => {
   const authenticationInfo = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
   let patientProfile = authenticationInfo.patientProfile;
-  //console.log(authenticationInfo.accountAddress);
+  console.log(authenticationInfo.accountAddress);
 
   const updateProfile = async () => {
     if (patientProfile === null) {
@@ -36,18 +37,24 @@ const PatientRecordsScreen = (props) => {
           },
         });
 
-        console.log(authenticationInfo.accountAddress);
-        console.log(res);
-
         patientProfile = new PatientProfile(
           res.data.name,
           res.data.birthday,
           res.data.gender
         );
 
+        console.log(res.data.name);
+
         dispatch(authActions.setPatientProfile(patientProfile));
         dispatch(authActions.setAccountRetrieved(true));
-        console.log(res.data.files);
+
+        // load file names
+        if (patientRecordsInfo.patientRecords.length === 0) {
+          for (var i = 0; i < res.data.files; i++) {
+            var newRecord = new Record(res.data.files[i], "");
+            dispatch(patientRecordsActions.addRecord(newRecord));
+          }
+        }
       } catch (err) {
         console.log("error");
       }
@@ -65,13 +72,23 @@ const PatientRecordsScreen = (props) => {
     });
   };
 
-  const deleteRecordHandler = (index) => {
+  const deleteRecordHandler = async (index) => {
     Alert.alert("Delete Record", "This record will be deleted. Are you sure?", [
       { text: "Cancel" },
       {
         text: "Delete",
-        onPress: () => {
+        onPress: async () => {
           dispatch(patientRecordsActions.deleteRecord(index));
+          try {
+            var res = await axios.post(localHost + "/patient/delete_file", {
+              params: {
+                filename: patientRecordsInfo.patientRecords[index].title,
+                address: authenticationInfo.accountAddress,
+              },
+            });
+          } catch (err) {
+            console.log("error");
+          }
         },
       },
     ]);

@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
   body: {
     height: 599,
     width: "100%",
+    height: 635,
   },
   icon: {
     marginTop: 20,
@@ -114,7 +115,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   bottom_bar: {
-    alignSelf: "flex-end",
+    top: 10,
+    //alignSelf: "flex-end",
   },
 });
 

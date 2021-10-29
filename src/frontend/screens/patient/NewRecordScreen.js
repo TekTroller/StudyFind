@@ -5,19 +5,24 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Image,
+  Alert,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import Colors from "../../assets/Colors";
 import ImgPicker from "../../components/ImgPicker";
 import * as patientRecordsActions from "../../store/actions/patientRecords";
 import Record from "../../models/PatientRecord";
+import localHost from "../../host";
 
 const NewRecordScreen = (props) => {
   const [titleValue, setTitleValue] = useState("");
   const [selectedImage, setSelectedImage] = useState();
   const [valid, setValid] = useState(false);
 
+  const authenticationInfo = useSelector((state) => state.authentication);
   const patientRecordsInfo = useSelector((state) => state.patientRecords);
   const dispatch = useDispatch();
 
@@ -29,19 +34,47 @@ const NewRecordScreen = (props) => {
     }
   };
 
-  const imageTakenHandler = (imagePath) => {
-    setSelectedImage(imagePath);
+  const imageTakenHandler = (imageUri) => {
+    setSelectedImage(imageUri);
   };
 
   const checkValidity = () => {
     setValid(titleValue.length > 1 && selectedImage !== null);
   };
 
-  const saveRecordHandler = () => {
+  const saveRecordHandler = async () => {
     if (valid) {
-      const newRecord = new Record(titleValue, selectedImage);
-      dispatch(patientRecordsActions.addRecord(newRecord));
-      props.navigation.goBack();
+      var duplicate = false;
+      if (patientRecordsInfo.patientRecords.length > 0) {
+        for (var i = 0; i < res.data.files; i++) {
+          if (patientRecordsInfo.patientRecords[i].title === titleValue) {
+            duplicate = true;
+            break;
+          }
+        }
+      }
+
+      if (duplicate) {
+        Alert.alert(
+          "Duplicate record name",
+          "This record name has been used. Use a new one.",
+          [{ text: "cancel" }]
+        );
+      } else {
+        const newRecord = new Record(titleValue, selectedImage);
+
+        var res = await axios.post(localHost + "/patient/upload_file", {
+          params: {
+            filename: titleValue,
+            filedata: selectedImage.toString(),
+            address: authenticationInfo.accountAddress,
+          },
+        });
+        dispatch(patientRecordsActions.addRecord(newRecord));
+        props.navigation.goBack();
+
+        //props.navigation.goBack();
+      }
     }
   };
 
