@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 import PatientBottomBar from "../../components/PatientBottomBar";
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
+import * as patientRecordsActions from "../../store/actions/patientRecords";
 import PatientProfile from "../../models/PatientProfile";
 
 import localHost from "../../host";
@@ -75,6 +76,36 @@ const PatientProfileScreen = (props) => {
           style={styles.icon}
         />
         {info}
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(authActions.setAccountRetrieved(false));
+            dispatch(authActions.setPatientProfile(null));
+            dispatch(authActions.enterAccountEmail(""));
+            dispatch(authActions.enterAccountAddress(""));
+            dispatch(patientRecordsActions.clearRecords());
+            props.navigation.navigate({ routeName: "Login" });
+          }}
+          style={{
+            width: 300,
+            height: 50,
+            marginTop: 30,
+            backgroundColor: Colors.studyFindRed,
+            alignSelf: "center",
+            borderRadius: 4,
+            elevation: 2,
+          }}
+        >
+          <Text
+            style={{
+              marginTop: 10,
+              alignSelf: "center",
+              color: "white",
+              fontSize: 20,
+            }}
+          >
+            Log Out
+          </Text>
+        </TouchableOpacity>
       </View>
       <PatientBottomBar
         screen={"Profile"}
@@ -100,6 +131,7 @@ const styles = StyleSheet.create({
   body: {
     height: 599,
     width: "100%",
+    height: 635,
   },
   icon: {
     marginTop: 20,
@@ -114,7 +146,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   bottom_bar: {
-    alignSelf: "flex-end",
+    top: 10,
+    //alignSelf: "flex-end",
   },
 });
 

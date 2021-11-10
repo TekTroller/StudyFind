@@ -4,41 +4,64 @@ const firestore = new FirestoreClient();
 const Patient = require("../ethereum/builds/PatientController.json");
 const web3 = require("../web3");
 
-
 let account;
-web3.eth.getAccounts().then(accounts => {account = accounts[0]});
+web3.eth.getAccounts().then((accounts) => {
+  account = accounts[0];
+});
 
 const getProfile = async (req, res) => {
   const patient = new web3.eth.Contract(Patient.abi, req.query.address);
 
-  const name = await patient.methods.get_name().call();
-  const birthday = await patient.methods.get_birthday().call();
-  const gender = await patient.methods.get_gender().call();
-  const files = await patient.methods.get_filenames().call();
+  try {
+    const name = await patient.methods.get_name().call();
+    const birthday = await patient.methods.get_birthday().call();
+    const gender = await patient.methods.get_gender().call();
+    const files = await patient.methods.get_filenames().call();
 
-  const msg = {
-    name: name,
-    birthday: birthday,
-    gender: gender,
-    files: files,
-  };
+    const msg = {
+      name: name,
+      birthday: birthday,
+      gender: gender,
+      files: files,
+    };
 
-  res.write(JSON.stringify(msg));
-  res.end();
+    res.write(JSON.stringify(msg));
+    res.end();
+  } catch (err) {
+    const msg = {
+      status: "error",
+    };
+    res.write(JSON.stringify(msg));
+    res.end();
+  }
 };
 
 const uploadFile = async (req, res) => {
   const { filename, filedata, address } = req.body;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
-  const file_token = await firestore.upload(filedata);
+  const file_token = await firestore.upload({ data: filedata });
+  console.log(file_token);
 
   try {
     await patient.methods.add_file(filename, file_token).send({
       from: account,
       gas: "5000000",
     });
+
+    console.log("done");
+    const msg = {
+      success: true,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
   } catch (err) {
+    const msg = {
+      success: false,
+    };
+    res.write(JSON.stringify(msg));
+    res.end();
     throw new Error("File already exists");
   }
 };
@@ -76,12 +99,18 @@ const deleteFile = async (req, res) => {
       from: account,
       gas: "5000000",
     });
+
+    // Delete from firestore
+    firestore.delete(filename);
+    const msg = {
+      success: true,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
   } catch (err) {
     throw new Error("File does not exist");
   }
-
-  // Delete from firestore
-  firestore.delete(filename);
 };
 
 const changeFileName = async (req, res) => {
@@ -96,9 +125,9 @@ const changeFileName = async (req, res) => {
   } catch (err) {
     throw new Error("File does not exist");
   }
-}
+};
 
-const processRequest = async (req ,res) => {
+const processRequest = async (req, res) => {
   const { professional_email, approve, address } = req.body;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
@@ -110,9 +139,9 @@ const processRequest = async (req ,res) => {
   } catch (err) {
     throw new Error("Something went wrong");
   }
-}
+};
 
-const banProfessional = async (req ,res) => {
+const banProfessional = async (req, res) => {
   const { professional_email, address } = req.body;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
@@ -124,31 +153,36 @@ const banProfessional = async (req ,res) => {
   } catch (err) {
     throw new Error("Something went wrong");
   }
-}
+};
 
-const getPendingRequests = async (req ,res) => {
+const getPendingRequests = async (req, res) => {
   const { address } = req.body;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
   const pending_requests = await patient.methods.get_pending_requests().call();
 
-  res.write(JSON.stringify({
-    requests: pending_requests
-  }));
+  res.write(
+    JSON.stringify({
+      requests: pending_requests,
+    })
+  );
   res.end();
-}
+};
 
 const getAuthorizedProfessionals = async (req, res) => {
   const patient = new web3.eth.Contract(Patient.abi, address);
 
-  const authorized_professionals = await patient.methods.get_authorized_professionals().call();
+  const authorized_professionals = await patient.methods
+    .get_authorized_professionals()
+    .call();
 
-  res.write(JSON.stringify({
-    authorized: authorized_professionals
-  }));
+  res.write(
+    JSON.stringify({
+      authorized: authorized_professionals,
+    })
+  );
   res.end();
-}
-
+};
 
 exports.getProfile = getProfile;
 exports.uploadFile = uploadFile;

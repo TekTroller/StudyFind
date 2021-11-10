@@ -23,51 +23,51 @@ const ProfessionalProfileScreen = (props) => {
         **useEffect hook recommended.**
         2. render professional profile data. Check updateProfile() function in screens/patient/PatientProfileScreen ;
     */
-    const authenticationInfo = useSelector((state) => state.authentication);
-    const dispatch = useDispatch();
-    let professionalProfile = authenticationInfo.professionalProfile;
-  
-    const updateProfile = async () => {
-      if (patientProfile === null) {
-        var res = await axios.get(localHost + "/professional/get_profile", {
-          params: {
-            address: authenticationInfo.accountAddress,
-          },
-        });
-  
-        professionalProfile = new ProfessionalProfile(
-          res.data.name,
-          res.data.institute
-        );
-        dispatch(authActions.setProfessionalProfile(professionalProfile));
-        dispatch(authActions.setAccountRetrieved(true));
-      }
-    };
-  
-    // const viewFolderHandler = () => {
-    //   props.navigation.navigate({
-    //     routeName: "ProfessionalFolder",
-    //   });
-    // };
-  
-    useEffect(() => {
-      updateProfile();
-    });
-  
-    let info = null;
-    if (patientProfile !== null) {
-      info = (
-        <View>
-          <View style={styles.text_wrapper}>
-            <Text style={styles.text}>{"Name: " + patientProfile.name}</Text>
-          </View>
-        </View>
+  const authenticationInfo = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
+  let professionalProfile = authenticationInfo.professionalProfile;
+
+  const updateProfile = async () => {
+    if (patientProfile === null) {
+      var res = await axios.get(localHost + "/professional/get_profile", {
+        params: {
+          address: authenticationInfo.accountAddress,
+        },
+      });
+
+      professionalProfile = new ProfessionalProfile(
+        res.data.name,
+        res.data.institute
       );
-    }  
+      dispatch(authActions.setProfessionalProfile(professionalProfile));
+      dispatch(authActions.setAccountRetrieved(true));
+    }
+  };
+
+  // const viewFolderHandler = () => {
+  //   props.navigation.navigate({
+  //     routeName: "ProfessionalFolder",
+  //   });
+  // };
+
+  useEffect(() => {
+    updateProfile();
+  });
+
+  let info = null;
+  if (patientProfile !== null) {
+    info = (
+      <View>
+        <View style={styles.text_wrapper}>
+          <Text style={styles.text}>{"Name: " + patientProfile.name}</Text>
+        </View>
+      </View>
+    );
+  }
 
   const viewFolderHandler = () => {
     props.navigation.navigate({
-    routeName: "PatientList",
+      routeName: "PatientList",
     });
   };
 
