@@ -2,7 +2,6 @@ const { Firestore } = require("@google-cloud/firestore");
 const path = require("path");
 const sha256 = require("js-sha256").sha256;
 
-
 class FirestoreClient {
   constructor() {
     // Firestore
@@ -21,7 +20,7 @@ class FirestoreClient {
 
   async upload(file) {
     // Compute a token for file
-    const file_token = sha256(file);
+    const file_token = sha256(JSON.stringify(file));
 
     // Upload file to google firestore
     try {

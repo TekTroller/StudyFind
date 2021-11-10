@@ -8,21 +8,24 @@ import localHost from "../../host";
 
 const RecordDetailScreen = (props) => {
   const patientRecordsInfo = useSelector((state) => state.patientRecords);
+  const authenticationInfo = useSelector((state) => state.authentication);
   const [ratio, setRatio] = useState(1);
   const dispatch = useDispatch();
   const title = props.navigation.getParam("title");
 
   let imageUri = props.navigation.getParam("imageUri");
+
   const getUri = async (filename, imageUri) => {
     try {
       if (imageUri === "") {
         var res = await axios.get(localHost + "/patient/view", {
           params: {
             filename: filename,
+            address: authenticationInfo.accountAddress,
           },
         });
 
-        let filedata = res.data.filedata;
+        let filedata = res.data.filedata.data.data;
         dispatch(patientRecordsActions.updateRecord(filename, filedata));
       }
     } catch (err) {
@@ -52,7 +55,7 @@ const RecordDetailScreen = (props) => {
       <Image
         style={{ width: "100%", height: undefined, aspectRatio: ratio }}
         resizeMode="contain"
-        source={{ uri: imageUri }}
+        source={{ uri: `data:image/gif;base64,${imageUri}` }}
       />
     </View>
   );

@@ -2,6 +2,7 @@ import {
   ADD_RECORD,
   UPDATE_RECORD,
   DELETE_RECORD,
+  CLEAR_RECORDS,
 } from "../actions/patientRecords";
 import { Image } from "react-native";
 import Record from "../../models/PatientRecord";
@@ -43,6 +44,8 @@ export default (state = initialState, action) => {
       newRecords.splice(action.targetIndex, 1);
       console.log(newRecords);
       return { patientRecords: newRecords };
+    case CLEAR_RECORDS:
+      return { patientRecords: [] };
     default:
       return state;
   }

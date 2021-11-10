@@ -53,8 +53,6 @@ const ImgPicker = (props) => {
       quality: 1,
       base64: true,
     });
-
-    console.log(image);
     setPickedImage(image.uri);
     props.onImageTaken(image.base64);
   };

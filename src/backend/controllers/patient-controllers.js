@@ -11,7 +11,6 @@ web3.eth.getAccounts().then((accounts) => {
 
 const getProfile = async (req, res) => {
   const patient = new web3.eth.Contract(Patient.abi, req.query.address);
-  console.log(patient.methods);
 
   try {
     const name = await patient.methods.get_name().call();
@@ -41,14 +40,28 @@ const uploadFile = async (req, res) => {
   const { filename, filedata, address } = req.body;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
-  const file_token = await firestore.upload(filedata);
+  const file_token = await firestore.upload({ data: filedata });
+  console.log(file_token);
 
   try {
     await patient.methods.add_file(filename, file_token).send({
       from: account,
       gas: "5000000",
     });
+
+    console.log("done");
+    const msg = {
+      success: true,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
   } catch (err) {
+    const msg = {
+      success: false,
+    };
+    res.write(JSON.stringify(msg));
+    res.end();
     throw new Error("File already exists");
   }
 };
@@ -86,12 +99,18 @@ const deleteFile = async (req, res) => {
       from: account,
       gas: "5000000",
     });
+
+    // Delete from firestore
+    firestore.delete(filename);
+    const msg = {
+      success: true,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
   } catch (err) {
     throw new Error("File does not exist");
   }
-
-  // Delete from firestore
-  firestore.delete(filename);
 };
 
 const changeFileName = async (req, res) => {

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -21,6 +22,7 @@ const NewRecordScreen = (props) => {
   const [titleValue, setTitleValue] = useState("");
   const [selectedImage, setSelectedImage] = useState();
   const [valid, setValid] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const authenticationInfo = useSelector((state) => state.authentication);
   const patientRecordsInfo = useSelector((state) => state.patientRecords);
@@ -62,23 +64,43 @@ const NewRecordScreen = (props) => {
         );
       } else {
         const newRecord = new Record(titleValue, selectedImage);
-
-        var res = await axios.post(localHost + "/patient/upload_file", {
-          params: {
-            filename: titleValue,
-            filedata: selectedImage.toString(),
-            address: authenticationInfo.accountAddress,
-          },
-        });
-        dispatch(patientRecordsActions.addRecord(newRecord));
-        props.navigation.goBack();
-
-        //props.navigation.goBack();
+        setLoading(true);
+        try {
+          var res = await axios.post(
+            localHost + "/patient/upload_file",
+            {
+              filename: titleValue,
+              filedata: selectedImage,
+              address: authenticationInfo.accountAddress,
+            },
+            { timeout: 30000 }
+          );
+          setLoading(false);
+          dispatch(patientRecordsActions.addRecord(newRecord));
+          props.navigation.goBack();
+        } catch (err) {
+          setLoading(false);
+          Alert.alert("Error", "Record upload failed", [{ text: "cancel" }]);
+        }
       }
     }
   };
 
   useEffect(() => checkValidity());
+  let activityIndication = null;
+  if (loading) {
+    activityIndication = (
+      <ActivityIndicator
+        size="large"
+        color={Colors.studyFindLightGreen}
+        style={styles.loading}
+      />
+    );
+  } else {
+    activityIndication = (
+      <Text style={styles.save_record_text}>Save Record</Text>
+    );
+  }
 
   return (
     <ScrollView>
@@ -96,7 +118,7 @@ const NewRecordScreen = (props) => {
           }
           onPress={saveRecordHandler}
         >
-          <Text style={styles.save_record_text}>Save Record</Text>
+          {activityIndication}
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -144,6 +166,9 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.studyFindGray,
     borderBottomWidth: 2,
     marginBottom: 15,
+  },
+  loading: {
+    marginTop: 5,
   },
 });
 

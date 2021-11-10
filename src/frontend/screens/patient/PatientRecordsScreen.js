@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,11 +26,18 @@ const PatientRecordsScreen = (props) => {
   const patientRecordsInfo = useSelector((state) => state.patientRecords);
   const authenticationInfo = useSelector((state) => state.authentication);
   const dispatch = useDispatch();
+
+  const [deleting, setDeleting] = useState(false);
+
   let patientProfile = authenticationInfo.patientProfile;
-  console.log(authenticationInfo.accountAddress);
+  //console.log("patientProfile: ", patientProfile);
+  //console.log("address: ", authenticationInfo.accountAddress);
+  //console.log("records: ", patientRecordsInfo.patientRecords);
+  //console.log("accountStatus: ", authenticationInfo.accountRetrieved);
 
   const updateProfile = async () => {
     if (patientProfile === null) {
+      //console.log("loading patient profile");
       try {
         var res = await axios.get(localHost + "/patient/get_profile", {
           params: {
@@ -43,18 +51,19 @@ const PatientRecordsScreen = (props) => {
           res.data.gender
         );
 
-        console.log(res.data.name);
-
         dispatch(authActions.setPatientProfile(patientProfile));
         dispatch(authActions.setAccountRetrieved(true));
 
         // load file names
-        if (patientRecordsInfo.patientRecords.length === 0) {
-          for (var i = 0; i < res.data.files; i++) {
-            var newRecord = new Record(res.data.files[i], "");
+        if (!authenticationInfo.accountRetrieved) {
+          for (var i = 0; i < res.data.files.length; i++) {
+            //console.log("here");
+            const newRecord = new Record(res.data.files[i], "");
+            //console.log(newRecord);
             dispatch(patientRecordsActions.addRecord(newRecord));
           }
         }
+        dispatch(authActions.setAccountRetrieved(true));
       } catch (err) {
         console.log("error");
       }
@@ -73,25 +82,38 @@ const PatientRecordsScreen = (props) => {
   };
 
   const deleteRecordHandler = async (index) => {
-    Alert.alert("Delete Record", "This record will be deleted. Are you sure?", [
-      { text: "Cancel" },
-      {
-        text: "Delete",
-        onPress: async () => {
-          dispatch(patientRecordsActions.deleteRecord(index));
-          try {
-            var res = await axios.post(localHost + "/patient/delete_file", {
-              params: {
-                filename: patientRecordsInfo.patientRecords[index].title,
-                address: authenticationInfo.accountAddress,
-              },
-            });
-          } catch (err) {
-            console.log("error");
-          }
+    Alert.alert(
+      "Delete Record",
+      "File deletion can take up to 15 seconds. Are you sure?",
+      [
+        { text: "Cancel" },
+        {
+          text: "Delete",
+          onPress: async () => {
+            try {
+              setDeleting(true);
+              //console.log("record: ", patientRecordsInfo.patientRecords[index]);
+              //console.log("address: ", authenticationInfo.accountAddress);
+              var res = await axios.post(
+                localHost + "/patient/delete_file",
+                {
+                  filename: patientRecordsInfo.patientRecords[index].title,
+                  address: authenticationInfo.accountAddress,
+                },
+                { timeout: 20000 }
+              );
+              dispatch(patientRecordsActions.deleteRecord(index));
+              setDeleting(false);
+            } catch (err) {
+              setDeleting(false);
+              Alert.alert("Error", "Record deletion failed", [
+                { text: "cancel" },
+              ]);
+            }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const viewProfileHandler = () => {
@@ -118,11 +140,17 @@ const PatientRecordsScreen = (props) => {
     </ScrollView>
   );
 
+  let loading = null;
+  if (deleting) {
+    loading = <ActivityIndicator size="large" color={Colors.studyFindRed} />;
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={("black", 60)} />
       <View style={{ flex: 1, width: "100%" }}>
         <View>{records}</View>
+        <View style={styles.loading}>{loading}</View>
         <TouchableOpacity
           style={styles.add_button_wrapper}
           onPress={showAddOptions}
@@ -166,7 +194,7 @@ const styles = StyleSheet.create({
 
   add_button_wrapper: {
     position: "relative",
-    marginTop: 170,
+    marginTop: 150,
     marginLeft: 300,
     backgroundColor: Colors.studyFindBlue,
     height: 70,
@@ -187,6 +215,11 @@ const styles = StyleSheet.create({
 
   panel_header: {
     alignItems: "center",
+  },
+
+  loading: {
+    width: "100%",
+    height: 20,
   },
 });
 
