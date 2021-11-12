@@ -15,17 +15,42 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
 import Colors from "../../assets/Colors";
 import PatientProfileRow from "../../components/PatientProfileRow";
+import ProfessionalProfile from "../../models/ProfessionalProfile";
 import * as patientListActions from "../../store/actions/patientList";
+
+import localHost from "../../host";
 
 const PatientListScreen = (props) => {
   const patientListInfo = useSelector((state) => state.patientList);
-  const dispatch = useDispatch();
 
   const [origin, setOrigin] = useState([]);
   const [filter, setFilter] = useState([]);
   const [search, setSearch] = useState("");
 
+  const authenticationInfo = useSelector((state) => state.authentication);
+  const dispatch = useDispatch();
+  let professionalProfile = authenticationInfo.professionalProfile;
+
+  const updateProfile = async () => {
+    if (professionalProfile === null) {
+      var res = await axios.get(localHost + "/professional/get_profile", {
+        params: {
+          address: authenticationInfo.accountAddress,
+        },
+      });
+
+      professionalProfile = new ProfessionalProfile(
+        res.data.name,
+        res.data.institute
+      );
+      console.log(res.data);
+      dispatch(authActions.setProfessionalProfile(professionalProfile));
+      dispatch(authActions.setAccountRetrieved(true));
+    }
+  };
+
   useEffect(() => {
+    updateProfile();
     userList();
     return () => {};
   }, []);
@@ -45,6 +70,7 @@ const PatientListScreen = (props) => {
     await fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
+        console.log(responseJson);
         responseJson.sort(compare);
         setFilter(responseJson);
         setOrigin(responseJson);

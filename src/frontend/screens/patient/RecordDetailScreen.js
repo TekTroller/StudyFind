@@ -34,9 +34,9 @@ const RecordDetailScreen = (props) => {
   };
   //const imageUri = props.navigation.getParam("imageUri");
 
-  Image.getSize(imageUri, (width, height) => {
-    setRatio(width / height);
-  });
+  // Image.getSize(imageUri, (width, height) => {
+  //   setRatio(width / height);
+  // });
 
   useEffect(() => {
     getUri(title, imageUri);

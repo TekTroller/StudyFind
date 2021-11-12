@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Ionicons } from "@expo/vector-icons";
 
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
-import PatientBottomBar from "../../components/PatientBottomBar";
 
 import Colors from "../../assets/Colors";
 import * as authActions from "../../store/actions/auth";
 import ProfessionalProfile from "../../models/ProfessionalProfile";
 
 import localHost from "../../host";
+import { Row } from "native-base";
 
 const ProfessionalProfileScreen = (props) => {
   /*  TODO
@@ -28,7 +28,7 @@ const ProfessionalProfileScreen = (props) => {
   let professionalProfile = authenticationInfo.professionalProfile;
 
   const updateProfile = async () => {
-    if (patientProfile === null) {
+    if (professionalProfile === null) {
       var res = await axios.get(localHost + "/professional/get_profile", {
         params: {
           address: authenticationInfo.accountAddress,
@@ -37,8 +37,9 @@ const ProfessionalProfileScreen = (props) => {
 
       professionalProfile = new ProfessionalProfile(
         res.data.name,
-        res.data.institute
+        res.data.institution
       );
+      console.log(res.data);
       dispatch(authActions.setProfessionalProfile(professionalProfile));
       dispatch(authActions.setAccountRetrieved(true));
     }
@@ -55,11 +56,17 @@ const ProfessionalProfileScreen = (props) => {
   });
 
   let info = null;
-  if (patientProfile !== null) {
+  if (professionalProfile !== null) {
+    console.log(professionalProfile);
     info = (
       <View>
         <View style={styles.text_wrapper}>
-          <Text style={styles.text}>{"Name: " + patientProfile.name}</Text>
+          <Text style={styles.text_title}>{"Name:  "}</Text>
+          <Text style={styles.text}>{professionalProfile.name}</Text>
+        </View>
+        <View style={styles.text_wrapper}>
+          <Text style={styles.text_title}>{"Institute:  "}</Text>
+          <Text style={styles.text}>{professionalProfile.institute}</Text>
         </View>
       </View>
     );
@@ -81,10 +88,40 @@ const ProfessionalProfileScreen = (props) => {
           size={100}
           style={styles.icon}
         />
+        {info}
+        <TouchableOpacity
+          onPress={() => {
+            dispatch(authActions.setAccountRetrieved(false));
+            dispatch(authActions.setProfessionalProfile(null));
+            dispatch(authActions.enterAccountEmail(""));
+            dispatch(authActions.enterAccountAddress(""));
+            props.navigation.navigate({ routeName: "Login" });
+          }}
+          style={{
+            width: 300,
+            height: 50,
+            marginTop: 300,
+            backgroundColor: Colors.studyFindRed,
+            alignSelf: "center",
+            borderRadius: 4,
+            elevation: 2,
+          }}
+        >
+          <Text
+            style={{
+              marginTop: 10,
+              alignSelf: "center",
+              color: "white",
+              fontSize: 20,
+            }}
+          >
+            Log Out
+          </Text>
+        </TouchableOpacity>
       </View>
       <ProfessionalBottomBar
         screen={"Profile"}
-        pressFolder={viewPatientListHandler}
+        pressFolder={viewFolderHandler}
         style={styles.bottom_bar}
       />
     </View>
@@ -104,7 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    height: 598,
+    height: 635,
     width: "100%",
   },
   icon: {
@@ -113,14 +150,22 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   text_wrapper: {
-    alignSelf: "center",
+    alignSelf: "flex-start",
+    marginLeft: 50,
+    flexDirection: "row",
   },
   text: {
     fontFamily: "Roboto",
-    fontSize: 20,
+    fontSize: 16,
+    marginTop: 2,
+  },
+  text_title: {
+    fontFamily: "Roboto",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   bottom_bar: {
-    alignSelf: "flex-end",
+    alignSelf: "center",
   },
 });
 
