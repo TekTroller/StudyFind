@@ -10,7 +10,9 @@ const ProfessionalBottomBar = (props) => {
       <TouchableOpacity style={styles.icon_wrapper} onPress={props.pressFolder}>
         <Ionicons
           name={props.screen === "Folder" ? "list" : "list-outline"}
-          color={props.screen === "Folder" ? Colors.studyFindBlue : "white"}
+          color={
+            props.screen === "Folder" ? Colors.studyFindLightGreen : "white"
+          }
           size={40}
         />
       </TouchableOpacity>
@@ -24,7 +26,9 @@ const ProfessionalBottomBar = (props) => {
               ? "person-circle"
               : "person-circle-outline"
           }
-          color={props.screen === "Profile" ? Colors.studyFindBlue : "white"}
+          color={
+            props.screen === "Profile" ? Colors.studyFindLightGreen : "white"
+          }
           size={40}
         />
       </TouchableOpacity>

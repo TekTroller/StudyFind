@@ -51,15 +51,16 @@ const PatientProfileScreen = (props) => {
     info = (
       <View>
         <View style={styles.text_wrapper}>
-          <Text style={styles.text}>{"Name: " + patientProfile.name}</Text>
+          <Text style={styles.text_title}>{"Name:  "}</Text>
+          <Text style={styles.text}>{patientProfile.name}</Text>
         </View>
         <View style={styles.text_wrapper}>
-          <Text style={styles.text}>
-            {"Birthday: " + patientProfile.birthday}
-          </Text>
+          <Text style={styles.text_title}>{"Birthday:  "}</Text>
+          <Text style={styles.text}>{patientProfile.birthday}</Text>
         </View>
         <View style={styles.text_wrapper}>
-          <Text style={styles.text}>{"Gender: " + patientProfile.gender}</Text>
+          <Text style={styles.text_title}>{"Gender:  "}</Text>
+          <Text style={styles.text}>{patientProfile.gender}</Text>
         </View>
       </View>
     );
@@ -88,7 +89,7 @@ const PatientProfileScreen = (props) => {
           style={{
             width: 300,
             height: 50,
-            marginTop: 30,
+            marginTop: 300,
             backgroundColor: Colors.studyFindRed,
             alignSelf: "center",
             borderRadius: 4,
@@ -139,11 +140,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   text_wrapper: {
-    alignSelf: "center",
+    alignSelf: "flex-start",
+    marginLeft: 50,
+    flexDirection: "row",
   },
   text: {
     fontFamily: "Roboto",
-    fontSize: 20,
+    fontSize: 16,
+    marginTop: 2,
+  },
+  text_title: {
+    fontFamily: "Roboto",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   bottom_bar: {
     top: 10,

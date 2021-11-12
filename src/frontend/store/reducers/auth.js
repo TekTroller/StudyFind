@@ -3,6 +3,7 @@ import {
   ENTER_ADDRESS,
   SET_ACCOUNT_RETRIEVED,
   SET_PATIENT_PROFILE,
+  SET_PROFESSIONAL_PROFILE,
 } from "../actions/auth";
 
 const initialState = {
@@ -10,6 +11,7 @@ const initialState = {
   accountAddress: "",
   accountRetrieved: false,
   patientProfile: null,
+  professionalProfile: null,
 };
 
 export default (state = initialState, action) => {
@@ -22,6 +24,8 @@ export default (state = initialState, action) => {
       return { ...state, accountRetrieved: action.accountRetrieved };
     case SET_PATIENT_PROFILE:
       return { ...state, patientProfile: action.patientProfile };
+    case SET_PROFESSIONAL_PROFILE:
+      return { ...state, professionalProfile: action.professionalProfile };
     default:
       return state;
   }

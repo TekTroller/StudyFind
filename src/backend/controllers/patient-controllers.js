@@ -109,6 +109,12 @@ const deleteFile = async (req, res) => {
     res.write(JSON.stringify(msg));
     res.end();
   } catch (err) {
+    const msg = {
+      success: false,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
     throw new Error("File does not exist");
   }
 };
@@ -136,7 +142,20 @@ const processRequest = async (req, res) => {
       from: account,
       gas: "5000000",
     });
+
+    const msg = {
+      success: true,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
   } catch (err) {
+    const msg = {
+      success: false,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
     throw new Error("Something went wrong");
   }
 };
@@ -155,11 +174,13 @@ const banProfessional = async (req, res) => {
   }
 };
 
-const getPendingRequests = async (req, res) => {
-  const { address } = req.body;
+const getUnprocessedRequests = async (req, res) => {
+  const { address } = req.query;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
-  const pending_requests = await patient.methods.get_pending_requests().call();
+  const pending_requests = await patient.methods
+    .get_unprocessed_requests()
+    .call();
 
   res.write(
     JSON.stringify({
@@ -170,6 +191,7 @@ const getPendingRequests = async (req, res) => {
 };
 
 const getAuthorizedProfessionals = async (req, res) => {
+  const { address } = req.query;
   const patient = new web3.eth.Contract(Patient.abi, address);
 
   const authorized_professionals = await patient.methods
@@ -191,5 +213,5 @@ exports.deleteFile = deleteFile;
 exports.changeFileName = changeFileName;
 exports.processRequest = processRequest;
 exports.banProfessional = banProfessional;
-exports.getPendingRequests = getPendingRequests;
+exports.getUnprocessedRequests = getUnprocessedRequests;
 exports.getAuthorizedProfessionals = getAuthorizedProfessionals;
