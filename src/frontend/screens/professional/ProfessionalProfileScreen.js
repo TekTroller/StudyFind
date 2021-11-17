@@ -12,7 +12,6 @@ import * as authActions from "../../store/actions/auth";
 import ProfessionalProfile from "../../models/ProfessionalProfile";
 
 import localHost from "../../host";
-import { Row } from "native-base";
 
 const ProfessionalProfileScreen = (props) => {
   /*  TODO
@@ -28,6 +27,7 @@ const ProfessionalProfileScreen = (props) => {
   let professionalProfile = authenticationInfo.professionalProfile;
 
   const updateProfile = async () => {
+    //console.log(professionalProfile);
     if (professionalProfile === null) {
       var res = await axios.get(localHost + "/professional/get_profile", {
         params: {
@@ -39,7 +39,7 @@ const ProfessionalProfileScreen = (props) => {
         res.data.name,
         res.data.institution
       );
-      console.log(res.data);
+      //console.log(res.data.institution);
       dispatch(authActions.setProfessionalProfile(professionalProfile));
       dispatch(authActions.setAccountRetrieved(true));
     }
@@ -57,7 +57,6 @@ const ProfessionalProfileScreen = (props) => {
 
   let info = null;
   if (professionalProfile !== null) {
-    console.log(professionalProfile);
     info = (
       <View>
         <View style={styles.text_wrapper}>

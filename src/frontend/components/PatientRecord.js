@@ -5,6 +5,24 @@ import { Ionicons } from "@expo/vector-icons";
 import Colors from "../assets/Colors";
 
 const PatientRecord = (props) => {
+  let trash = null;
+
+  if (props.canDelete) {
+    trash = (
+      <TouchableOpacity
+        style={styles.trash_wrapper}
+        onPress={() => props.deleteRecordHandler(props.index)}
+      >
+        <Ionicons
+          name="trash-outline"
+          color={Colors.studyFindRed}
+          size={25}
+          style={styles.trash_icon}
+        />
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity
@@ -19,7 +37,8 @@ const PatientRecord = (props) => {
         />
         <Text style={styles.title}>{props.record.title}</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {trash}
+      {/* <TouchableOpacity
         style={styles.trash_wrapper}
         onPress={() => props.deleteRecordHandler(props.index)}
       >
@@ -29,14 +48,14 @@ const PatientRecord = (props) => {
           size={25}
           style={styles.trash_icon}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: "80%",
+    width: "90%",
     height: 50,
     borderWidth: 1,
     borderRadius: 2,
@@ -48,7 +67,7 @@ const styles = StyleSheet.create({
   file_wrapper: {
     flexDirection: "row",
     height: "100%",
-    width: 270,
+    width: 310,
   },
 
   file_icon: {

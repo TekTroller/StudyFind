@@ -4,13 +4,16 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "../assets/Colors";
 
-const PatientRecord = (props) => {
+const PatientProfileRow = (props) => {
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity style={styles.file_wrapper}>
+      <TouchableOpacity
+        style={styles.file_wrapper}
+        onPress={() => props.viewPatientDetailHandler(props.item)}
+      >
         <Ionicons
-          name="person-circle-outline"
-          color={Colors.studyFindDarkBlue}
+          name="person-circle"
+          color={Colors.studyFindBlue}
           size={25}
           style={styles.profile_icon}
         />
@@ -47,4 +50,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PatientRecord;
+export default PatientProfileRow;

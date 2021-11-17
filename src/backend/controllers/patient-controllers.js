@@ -169,7 +169,19 @@ const banProfessional = async (req, res) => {
       from: account,
       gas: "5000000",
     });
+    const msg = {
+      success: true,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
   } catch (err) {
+    const msg = {
+      success: false,
+    };
+
+    res.write(JSON.stringify(msg));
+    res.end();
     throw new Error("Something went wrong");
   }
 };

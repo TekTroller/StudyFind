@@ -15,7 +15,7 @@ import PatientProfileScreen from "../screens/patient/PatientProfileScreen";
 // Professionals
 import PatientListScreen from "../screens/professional/PatientListScreen";
 import ProfessionalProfileScreen from "../screens/professional/ProfessionalProfileScreen";
-import PatientDetialScreen from "../screens/professional/PatientDetailScreen";
+import PatientDetailScreen from "../screens/professional/PatientDetailScreen";
 import PatientRecordDetailScreen from "../screens/professional/PatientRecordDetailScreen";
 
 // Other imports
@@ -68,7 +68,7 @@ const PatientNavigator = createSwitchNavigator(
 const ProfessionalFolderNavigator = createStackNavigator(
   {
     PatientList: PatientListScreen,
-    PatiantDetail: PatientDetialScreen,
+    PatientDetail: PatientDetailScreen,
     PatientRecordDetail: PatientRecordDetailScreen,
   },
   { defaultNavigationOptions: defaultNavOptions }

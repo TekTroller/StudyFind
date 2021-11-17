@@ -133,6 +133,7 @@ const PatientRecordsScreen = (props) => {
           key={index}
           index={index}
           record={item}
+          canDelete={true}
           showRecordDetailHandler={showRecordDetailHandler}
           deleteRecordHandler={deleteRecordHandler}
         />
