@@ -11,12 +11,14 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import ProfessionalBottomBar from "../../components/ProfessionalBottomBar";
 import Colors from "../../assets/Colors";
 import PatientProfileRow from "../../components/PatientProfileRow";
 import ProfessionalProfile from "../../models/ProfessionalProfile";
 import * as patientListActions from "../../store/actions/patientList";
+import * as authActions from "../../store/actions/auth";
 
 import localHost from "../../host";
 
@@ -32,28 +34,32 @@ const PatientListScreen = (props) => {
   let professionalProfile = authenticationInfo.professionalProfile;
 
   const updateProfile = async () => {
-    if (professionalProfile === null) {
-      var res = await axios.get(localHost + "/professional/get_profile", {
-        params: {
-          address: authenticationInfo.accountAddress,
-        },
-      });
+    //if (professionalProfile === null) {
+    var res = await axios.get(localHost + "/professional/get_profile", {
+      params: {
+        address: authenticationInfo.accountAddress,
+      },
+    });
 
-      professionalProfile = new ProfessionalProfile(
-        res.data.name,
-        res.data.institute
-      );
-      console.log(res.data);
-      dispatch(authActions.setProfessionalProfile(professionalProfile));
-      dispatch(authActions.setAccountRetrieved(true));
+    professionalProfile = new ProfessionalProfile(
+      res.data.name,
+      res.data.institution
+    );
+
+    var newPatientList = [];
+    for (var i = 0; i < res.data.patients.length; i++) {
+      newPatientList.push(res.data.patients[i]);
     }
-  };
+    newPatientList.sort(compare);
+    setFilter(newPatientList);
+    setOrigin(newPatientList);
 
-  useEffect(() => {
-    updateProfile();
-    userList();
-    return () => {};
-  }, []);
+    dispatch(patientListActions.setPatientList(newPatientList));
+    //console.log(res.data);
+    dispatch(authActions.setProfessionalProfile(professionalProfile));
+    dispatch(authActions.setAccountRetrieved(true));
+    //}
+  };
 
   const compare = (a, b) => {
     if (a.name < b.name) {
@@ -63,22 +69,6 @@ const PatientListScreen = (props) => {
       return 1;
     }
     return 0;
-  };
-
-  const userList = async () => {
-    const url = "https://jsonplaceholder.typicode.com/users";
-    await fetch(url)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson);
-        responseJson.sort(compare);
-        setFilter(responseJson);
-        setOrigin(responseJson);
-        dispatch(patientListActions.getPatientList(responseJson));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   };
 
   const searchFilter = (text) => {
@@ -101,13 +91,32 @@ const PatientListScreen = (props) => {
     });
   };
 
+  const viewPatientDetailHandler = (patientItem) => {
+    //console.log(patientItem);
+    props.navigation.navigate({
+      routeName: "PatientDetail",
+      params: { patient: patientItem },
+    });
+  };
+
   const patients = (
     <ScrollView contentContainerStyle={styles.patient_list_wrapper}>
       {filter.map((item, index) => (
-        <PatientProfileRow key={index} name={item.name} />
+        <PatientProfileRow
+          key={index}
+          name={item.name}
+          item={item}
+          viewPatientDetailHandler={viewPatientDetailHandler}
+        />
       ))}
     </ScrollView>
   );
+
+  useEffect(() => {
+    updateProfile();
+    //userList();
+    return () => {};
+  }, []);
 
   return (
     <TouchableWithoutFeedback

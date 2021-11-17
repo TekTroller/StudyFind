@@ -1,4 +1,4 @@
-import { GET_PATIENT_LIST } from "../actions/patientList";
+import { SET_PATIENT_LIST } from "../actions/patientList";
 
 const initialState = {
   patientList: [],
@@ -6,8 +6,8 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case GET_PATIENT_LIST:
-      return { patientList: action.patientList };
+    case SET_PATIENT_LIST:
+      return { ...state, patientList: action.patientList };
     default:
       return state;
   }
