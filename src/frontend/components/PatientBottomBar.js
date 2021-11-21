@@ -14,7 +14,7 @@ const PatientBottomBar = (props) => {
           size={40}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.icon_wrapper} onPress={props.pressFolder}>
+      <TouchableOpacity style={styles.icon_wrapper} onPress={props.pressMessage}>
          <Ionicons
             name={props.screen === "Message" ? "mail" : "mail-outline"}
             color={props.screen === "Message" ? Colors.studyFindBlue : "white"}
