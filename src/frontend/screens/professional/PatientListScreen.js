@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -141,7 +142,20 @@ const PatientListScreen = (props) => {
               onChangeText={(text) => searchFilter(text)}
             />
           </View>
-          {patients}
+          <View>{patients}</View>
+          <TouchableOpacity
+            style={styles.add_button_wrapper}
+            onPress={() => {
+              props.navigation.navigate({ routeName: "RequestsOut" });
+            }}
+          >
+            <Ionicons
+              name="person-add-sharp"
+              color="white"
+              size={30}
+              style={styles.add_button}
+            />
+          </TouchableOpacity>
         </View>
         <ProfessionalBottomBar
           pressProfile={viewProfileHandler}
@@ -191,15 +205,25 @@ const styles = StyleSheet.create({
     marginLeft: "5",
   },
 
-  image: {
-    width: 244,
-    height: 75,
+  add_button_wrapper: {
+    marginTop: 40,
+    marginLeft: 300,
+    backgroundColor: Colors.studyFindBlue,
+    height: 70,
+    width: 70,
+    borderRadius: 35,
+    elevation: 2,
+  },
+
+  add_button: {
     alignSelf: "center",
-    marginTop: 20,
+    marginTop: 18,
+    marginLeft: 2,
   },
 
   patient_list_wrapper: {
     width: "80%",
+    height: 450,
     marginTop: 10,
     alignSelf: "center",
   },
