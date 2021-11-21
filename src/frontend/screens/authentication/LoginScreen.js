@@ -25,7 +25,6 @@ const LoginScreen = (props) => {
   const [loginPassword, setLoginPassword] = useState("");
   const [loginAccountType, setLoginAccountType] = useState("Patient");
   const [valid, setValid] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
 
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -64,11 +63,13 @@ const LoginScreen = (props) => {
       params: {
         email: loginEmail,
         password: loginPassword,
-        usertype: (loginAccountType === "Professional").toString(),
+        usertype: loginAccountType === "Professional",
       },
     });
 
-    if (res.data.verified === false) {
+    console.log(!res.data.verifies);
+
+    if (!res.data.verified) {
       Alert.alert("Wrong Credentials", "Incorrect username or password", [
         { text: "cancel" },
       ]);

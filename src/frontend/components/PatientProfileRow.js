@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 
   file_wrapper: {
     flexDirection: "row",
-    height: "100%",
+    //height: "100%",
   },
 
   profile_icon: {

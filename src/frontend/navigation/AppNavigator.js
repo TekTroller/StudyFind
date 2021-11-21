@@ -18,6 +18,7 @@ import PatientListScreen from "../screens/professional/PatientListScreen";
 import ProfessionalProfileScreen from "../screens/professional/ProfessionalProfileScreen";
 import PatientDetailScreen from "../screens/professional/PatientDetailScreen";
 import PatientRecordDetailScreen from "../screens/professional/PatientRecordDetailScreen";
+import RequestsOutScreen from "../screens/professional/RequestsOutScreen";
 
 // Other imports
 import Colors from "../assets/Colors";
@@ -79,6 +80,7 @@ const ProfessionalFolderNavigator = createStackNavigator(
     PatientList: PatientListScreen,
     PatientDetail: PatientDetailScreen,
     PatientRecordDetail: PatientRecordDetailScreen,
+    RequestsOut: RequestsOutScreen,
   },
   { defaultNavigationOptions: defaultNavOptions }
 );

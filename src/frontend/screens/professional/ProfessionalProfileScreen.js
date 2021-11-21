@@ -129,7 +129,7 @@ const ProfessionalProfileScreen = (props) => {
 
 ProfessionalProfileScreen.navigationOptions = () => {
   return {
-    headerTitle: "Professional Profile",
+    headerTitle: "Profile",
   };
 };
 
