@@ -11,6 +11,7 @@ import PatientRecordsScreen from "../screens/patient/PatientRecordsScreen";
 import NewRecordScreen from "../screens/patient/NewRecordScreen";
 import RecordDetailScreen from "../screens/patient/RecordDetailScreen";
 import PatientProfileScreen from "../screens/patient/PatientProfileScreen";
+import PatientMessageScreen from "../screens/patient/PatientMessageScreen";
 
 // Professionals
 import PatientListScreen from "../screens/professional/PatientListScreen";
@@ -51,6 +52,13 @@ const PatientRecordNavigator = createStackNavigator(
   { defaultNavigationOptions: defaultNavOptions }
 );
 
+const PatientMessageNavigator = createStackNavigator(
+  {
+    PatientMessage: PatientMessageScreen,
+  },
+  { defaultNavigationOptions: defaultNavOptions }
+);
+
 const PatientProfileNavigator = createStackNavigator(
   {
     PatientProfileScreen: PatientProfileScreen,
@@ -62,6 +70,7 @@ const PatientNavigator = createSwitchNavigator(
   {
     PatientFolder: PatientRecordNavigator,
     PatientProfile: PatientProfileNavigator,
+    PatientMessage: PatientMessageNavigator,
   },
   { defaultNavigationOptions: defaultNavOptions }
 );
