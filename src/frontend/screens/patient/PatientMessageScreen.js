@@ -96,7 +96,11 @@ const PatientMessageScreen = (props) => {
 
   return (
     <View>
-      <View style={styles.container1}>
+
+      <View style={styles.container}>
+        <StatusBar backgroundColor={("black", 60)} />
+        <View style={styles.body}>
+        <View style={styles.container1}>
         <View style={styles.headerContainer}>
           <View style={styles.htextContainer}>
             <Text style={styles.headerText}>Requests</Text>
@@ -123,10 +127,7 @@ const PatientMessageScreen = (props) => {
           renderItem={personView}
         />
       </View>
-
-      <View style={styles.container}>
-        <StatusBar backgroundColor={("black", 60)} />
-        <View style={styles.body}></View>
+        </View>
         <PatientBottomBar
           pressFolder={viewFolderHandler}
           pressProfile={viewProfileHandler}
