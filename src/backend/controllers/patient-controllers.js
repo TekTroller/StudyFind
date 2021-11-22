@@ -165,7 +165,8 @@ const banProfessional = async (req, res) => {
   const patient = new web3.eth.Contract(Patient.abi, address);
 
   try {
-    await patient.methods.ban_professional(professional_email, approve).send({
+    //console.log(patient.methods);
+    await patient.methods.ban_professional(professional_email).send({
       from: account,
       gas: "5000000",
     });

@@ -4,50 +4,47 @@ import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableOpacity,
   ActivityIndicator,
   Alert,
   ScrollView,
+  Text,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Ionicons } from "@expo/vector-icons";
 
 import PatientBottomBar from "../../components/PatientBottomBar";
-import Request from "../../components/Request";
+import Viewer from "../../components/Viewer";
 import Colors from "../../assets/Colors";
-import * as authActions from "../../store/actions/auth";
 
 import localHost from "../../host";
 
-const PatientMessageScreen = (props) => {
+const ViewersScreen = (props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [updated, setUpdated] = useState(true);
-  const [requests, setRequests] = useState(null);
+  const [viewers, setViewers] = useState(null);
   const authenticationInfo = useSelector((state) => state.authentication);
 
-  const loadRequests = async () => {
+  const loadViewers = async () => {
     try {
       if (updated) {
         setLoading(true);
         //console.log(authenticationInfo.accountAddress);
         var res = await axios.get(
-          localHost + "/patient/get_unprocessed_requests",
+          localHost + "/patient/get_authorized_professionals",
           {
             params: {
               address: authenticationInfo.accountAddress,
             },
           }
         );
-        setRequests(res.data.requests);
-        //console.log(res.data.requests);
+        setViewers(res.data.authorized);
+        //console.log(res.data.authorized);
         setLoading(false);
         setUpdated(false);
       }
     } catch (err) {
       setLoading(false);
-      Alert.alert("Error", "Error loading messages", [
+      Alert.alert("Error", "Error loading authorized viewers", [
         {
           text: "cancel",
         },
@@ -67,52 +64,18 @@ const PatientMessageScreen = (props) => {
     });
   };
 
-  const viewViewerHandler = () => {
+  const viewMessageHandler = () => {
     props.navigation.navigate({
-      routeName: "PatientViewers",
+      routeName: "PatientMessage",
     });
   };
 
   useEffect(() => {
-    loadRequests();
-  }, [requests]);
-
-  let messages = null;
-  if (requests !== null) {
-    if (requests.length === 0) {
-      messages = (
-        <View style={styles.messages_wrapper}>
-          <Text style={{ marginLeft: 110 }}>{"You have no message."}</Text>
-        </View>
-      );
-    } else {
-      messages = (
-        <ScrollView contentContainerStyle={styles.messages_wrapper}>
-          {requests.map((item, index) => (
-            <Request
-              key={index}
-              name={item[0] + ",   " + item[2]}
-              email={item[2]}
-              address={authenticationInfo.accountAddress}
-            />
-          ))}
-        </ScrollView>
-      );
-    }
-  }
-
-  let prompt = null;
-  if (requests !== null && requests.length !== 0) {
-    prompt = (
-      <View style={{ marginTop: 10, flexDirection: "row", marginLeft: 25 }}>
-        <Ionicons name="notifications" color={"orange"} size={25} />
-        <Text style={styles.prompt}>you have the following new requests</Text>
-      </View>
-    );
-  }
+    loadViewers();
+  }, [viewers]);
 
   let contents = null;
-  if (loading) {
+  if (loading || viewers === null) {
     contents = (
       <View style={styles.body}>
         <ActivityIndicator
@@ -123,12 +86,32 @@ const PatientMessageScreen = (props) => {
       </View>
     );
   } else {
-    contents = (
-      <View style={styles.body}>
-        {prompt}
-        {messages}
-      </View>
-    );
+    if (viewers !== null) {
+      if (viewers.length === 0) {
+        contents = (
+          <View style={styles.body}>
+            <Text style={{ marginLeft: 110, marginTop: 30 }}>
+              {"You have no viewers."}
+            </Text>
+          </View>
+        );
+      } else {
+        contents = (
+          <View style={styles.body}>
+            <ScrollView contentContainerStyle={styles.viewers_wrapper}>
+              {viewers.map((item, index) => (
+                <Viewer
+                  key={index}
+                  name={item[0] + ",   " + item[2]}
+                  email={item[2]}
+                  address={authenticationInfo.accountAddress}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        );
+      }
+    }
   }
 
   return (
@@ -138,17 +121,17 @@ const PatientMessageScreen = (props) => {
       <PatientBottomBar
         pressFolder={viewFolderHandler}
         pressProfile={viewProfileHandler}
-        pressViewer={viewViewerHandler}
-        screen={"Message"}
+        pressMessage={viewMessageHandler}
+        screen={"People"}
         style={styles.bottom_bar}
       />
     </View>
   );
 };
 
-PatientMessageScreen.navigationOptions = () => {
+ViewersScreen.navigationOptions = () => {
   return {
-    headerTitle: "Messages",
+    headerTitle: "Authorized Viewers",
   };
 };
 
@@ -162,7 +145,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 635,
   },
-  messages_wrapper: {
+  viewers_wrapper: {
     width: "100%",
     height: 350,
     marginTop: 20,
@@ -201,4 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PatientMessageScreen;
+export default ViewersScreen;

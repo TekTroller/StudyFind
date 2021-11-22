@@ -42,6 +42,12 @@ const PatientProfileScreen = (props) => {
     });
   };
 
+  const viewViewerHandler = () => {
+    props.navigation.navigate({
+      routeName: "PatientViewers",
+    });
+  };
+
   const viewMessageHandler = () => {
     props.navigation.navigate({
       routeName: "PatientMessage",
@@ -83,6 +89,7 @@ const PatientProfileScreen = (props) => {
           style={styles.icon}
         />
         {info}
+        {/* <View style={styles.viewers_wrapper}></View> */}
         <TouchableOpacity
           onPress={() => {
             dispatch(authActions.setAccountRetrieved(false));
@@ -118,6 +125,7 @@ const PatientProfileScreen = (props) => {
         screen={"Profile"}
         pressFolder={viewFolderHandler}
         pressMessage={viewMessageHandler}
+        pressViewer={viewViewerHandler}
         style={styles.bottom_bar}
       />
     </View>
@@ -137,7 +145,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    height: 599,
     width: "100%",
     height: 635,
   },
@@ -160,6 +167,15 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  viewers_wrapper: {
+    width: 300,
+    height: 50,
+    marginTop: 20,
+    backgroundColor: Colors.studyFindRed,
+    alignSelf: "center",
+    //borderRadius: 4,
+    //elevation: 2,
   },
   bottom_bar: {
     top: 10,
