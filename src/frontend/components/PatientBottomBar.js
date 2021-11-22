@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Colors from "../assets/Colors";
 
@@ -35,6 +35,20 @@ const PatientBottomBar = (props) => {
           size={40}
         />
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.icon_wrapper}
+        onPress={props.pressProfile}
+      >
+        <MaterialCommunityIcons
+          name={
+            props.screen === "Message"
+              ? "bell-ring"
+              : "bell-ring-outline"
+          }
+          color={props.screen === "Profile" ? Colors.studyFindBlue : "white"}
+          size={35}
+        />
+      </TouchableOpacity>
 
     </View>
   );
@@ -46,12 +60,12 @@ const styles = StyleSheet.create({
     height: 60,
     width: "100%",
     backgroundColor: Colors.studyFindDarkBlue,
+    justifyContent: "space-around"
   },
   icon_wrapper: {
-    width: 40,
-    height: 60,
-    marginTop: 10,
-    marginLeft: 70,
+    height: 65,
+    alignItems:"center",
+    alignContent:"center",
   },
 });
 
