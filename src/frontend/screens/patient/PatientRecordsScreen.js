@@ -84,7 +84,7 @@ const PatientRecordsScreen = (props) => {
   const deleteRecordHandler = async (index) => {
     Alert.alert(
       "Delete Record",
-      "File deletion can take up to 15 seconds. Are you sure?",
+      "File deletion can take over 15 seconds. Are you sure?",
       [
         { text: "Cancel" },
         {
@@ -123,10 +123,10 @@ const PatientRecordsScreen = (props) => {
   };
 
   const viewMessageHandler = () => {
-      props.navigation.navigate({
-        routeName: "PatientMessage",
-      });
-    };
+    props.navigation.navigate({
+      routeName: "PatientMessage",
+    });
+  };
 
   useEffect(() => {
     updateProfile();

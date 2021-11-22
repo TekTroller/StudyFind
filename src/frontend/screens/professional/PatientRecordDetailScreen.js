@@ -26,7 +26,6 @@ const PatientRecordDetailScreen = (props) => {
   const patient_email = props.navigation.getParam("patient_email");
   const filename = props.navigation.getParam("title");
   const authenticationInfo = useSelector((state) => state.authentication);
-  //console.log(filename, patient_email, authenticationInfo.accountAddress);
 
   const getUri = async (filename, patient_email) => {
     if (imageUri === "") {

@@ -83,6 +83,7 @@ const PatientProfileScreen = (props) => {
           style={styles.icon}
         />
         {info}
+        {/* <View style={styles.viewers_wrapper}></View> */}
         <TouchableOpacity
           onPress={() => {
             dispatch(authActions.setAccountRetrieved(false));
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    height: 599,
     width: "100%",
     height: 635,
   },
@@ -160,6 +160,15 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  viewers_wrapper: {
+    width: 300,
+    height: 50,
+    marginTop: 20,
+    backgroundColor: Colors.studyFindRed,
+    alignSelf: "center",
+    //borderRadius: 4,
+    //elevation: 2,
   },
   bottom_bar: {
     top: 10,
