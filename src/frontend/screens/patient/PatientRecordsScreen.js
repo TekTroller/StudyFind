@@ -128,6 +128,12 @@ const PatientRecordsScreen = (props) => {
     });
   };
 
+  const viewViewerHandler = () => {
+    props.navigation.navigate({
+      routeName: "PatientViewers",
+    });
+  };
+
   useEffect(() => {
     updateProfile();
   });
@@ -173,6 +179,7 @@ const PatientRecordsScreen = (props) => {
       <PatientBottomBar
         pressProfile={viewProfileHandler}
         pressMessage={viewMessageHandler}
+        pressViewer={viewViewerHandler}
         screen={"Folder"}
         style={styles.bottom_bar}
       />

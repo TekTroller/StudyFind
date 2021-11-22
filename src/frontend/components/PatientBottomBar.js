@@ -14,12 +14,22 @@ const PatientBottomBar = (props) => {
           size={40}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.icon_wrapper} onPress={props.pressMessage}>
-         <Ionicons
-            name={props.screen === "Message" ? "mail" : "mail-outline"}
-            color={props.screen === "Message" ? Colors.studyFindBlue : "white"}
-            size={40}
-         />
+      <TouchableOpacity style={styles.icon_wrapper} onPress={props.pressViewer}>
+        <Ionicons
+          name={props.screen === "People" ? "people" : "people-outline"}
+          color={props.screen === "People" ? Colors.studyFindBlue : "white"}
+          size={40}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.icon_wrapper}
+        onPress={props.pressMessage}
+      >
+        <Ionicons
+          name={props.screen === "Message" ? "mail" : "mail-outline"}
+          color={props.screen === "Message" ? Colors.studyFindBlue : "white"}
+          size={40}
+        />
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.icon_wrapper}
@@ -35,7 +45,6 @@ const PatientBottomBar = (props) => {
           size={40}
         />
       </TouchableOpacity>
-
     </View>
   );
 };
@@ -51,7 +60,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 60,
     marginTop: 10,
-    marginLeft: 70,
+    marginLeft: 50,
   },
 });
 

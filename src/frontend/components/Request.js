@@ -167,18 +167,6 @@ const Request = (props) => {
       <View style={styles.title_wrapper}>
         <Text style={styles.title}>{props.name}</Text>
       </View>
-      {/* <TouchableOpacity
-        style={styles.icon_wrapper}
-        onPress={rejectWrapperHandler}
-      >
-        {rejectIcon}
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.icon_wrapper}
-        onPress={acceptWrapperHandler}
-      >
-        {acceptIcon}
-      </TouchableOpacity> */}
       {status}
     </View>
   );
