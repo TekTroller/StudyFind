@@ -1,6 +1,6 @@
 # Blockchain_Database
 
-A mobile-based decentralized application (DAPP) used to store medical data.
+A mobile-based decentralized application (DAPP) used to store medical data based on ReactNative, NodeJS and Ethereum.
 
 How to start the frontend on computer:
 
