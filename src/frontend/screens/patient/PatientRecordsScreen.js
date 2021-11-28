@@ -65,8 +65,12 @@ const PatientRecordsScreen = (props) => {
         }
         dispatch(authActions.setAccountRetrieved(true));
       } catch (err) {
-        console.log("error");
-      }
+        Alert.alert(
+      "Error",
+      "Something went wrong.",
+      [
+        { text: "Cancel" }]
+      )
     }
   };
 

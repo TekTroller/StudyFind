@@ -1,9 +1,12 @@
 # Blockchain_Database
-A distributed database system used to store medical data.
-Owned by StudyFind
+
+A mobile-based decentralized application (DAPP) used to store medical data.
 
 How to start the frontend on computer:
-1.Download Android Studio
-2.Clone code from github and open in Android Studio
-3.Go to AVD Manager --> +create virtual device --> choose Pixel3
-4.Open terminal --> cd to studyfind --> npm install/ npm install --force --> npm start --> choose open in virtual device
+
+1. Download Android Studio.
+2. Go to AVD Manager --> +create virtual device
+3. On terminal, go to /src/backend/ directory, run `npm install` and then run `npm start`. The terminal should display "server running on PORT 3000".
+4. Open the virtual device created in step #2 above.
+5. On terminal, go to /src/frontend/ directory, run `npm install --save` and then run `npm run android`. This will take a while on the first time.
+

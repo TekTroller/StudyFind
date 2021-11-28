@@ -48,7 +48,7 @@ const NewRecordScreen = (props) => {
     if (valid) {
       var duplicate = false;
       if (patientRecordsInfo.patientRecords.length > 0) {
-        for (var i = 0; i < res.data.files; i++) {
+        for (var i = 0; i < patientRecordsInfo.patientRecords.length; i++) {
           if (patientRecordsInfo.patientRecords[i].title === titleValue) {
             duplicate = true;
             break;
@@ -76,8 +76,12 @@ const NewRecordScreen = (props) => {
             { timeout: 30000 }
           );
           setLoading(false);
-          dispatch(patientRecordsActions.addRecord(newRecord));
-          props.navigation.goBack();
+          if (res.data.success) {
+            dispatch(patientRecordsActions.addRecord(newRecord));
+            props.navigation.goBack();
+          } else {
+            Alert.alert("Error", "Record upload failed", [{ text: "cancel" }]);
+          }
         } catch (err) {
           setLoading(false);
           Alert.alert("Error", "Record upload failed", [{ text: "cancel" }]);

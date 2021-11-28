@@ -67,7 +67,7 @@ const LoginScreen = (props) => {
       },
     });
 
-    console.log(!res.data.verifies);
+    //console.log(!res.data.verifies);
 
     if (!res.data.verified) {
       Alert.alert("Wrong Credentials", "Incorrect username or password", [
