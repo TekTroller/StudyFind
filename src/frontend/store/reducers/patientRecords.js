@@ -42,7 +42,7 @@ export default (state = initialState, action) => {
       return { patientRecords: newRecords };
     case DELETE_RECORD:
       newRecords.splice(action.targetIndex, 1);
-      console.log(newRecords);
+      //console.log(newRecords);
       return { patientRecords: newRecords };
     case CLEAR_RECORDS:
       return { patientRecords: [] };

@@ -90,8 +90,8 @@ const ViewersScreen = (props) => {
       if (viewers.length === 0) {
         contents = (
           <View style={styles.body}>
-            <Text style={{ marginLeft: 110, marginTop: 30 }}>
-              {"You have no viewers."}
+            <Text style={{ marginLeft: 110, marginTop: 20 }}>
+              {"You have no viewer."}
             </Text>
           </View>
         );

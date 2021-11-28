@@ -22,7 +22,7 @@ const RequestsOutScreen = (props) => {
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(false);
   const authenticationInfo = useSelector((state) => state.authentication);
-  console.log(authenticationInfo);
+  //console.log(authenticationInfo);
 
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 

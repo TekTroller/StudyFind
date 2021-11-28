@@ -49,7 +49,7 @@ const uploadFile = async (req, res) => {
       gas: "5000000",
     });
 
-    console.log("done");
+    //console.log("done");
     const msg = {
       success: true,
     };

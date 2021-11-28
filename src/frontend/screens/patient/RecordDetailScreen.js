@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, View } from "react-native";
+import { Image, View, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
@@ -29,7 +29,7 @@ const RecordDetailScreen = (props) => {
         dispatch(patientRecordsActions.updateRecord(filename, filedata));
       }
     } catch (err) {
-      console.log("error");
+      Alert.alert("Error", "Something went wrong.", [{ text: "Cancel" }]);
     }
   };
   //const imageUri = props.navigation.getParam("imageUri");
