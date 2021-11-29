@@ -46,7 +46,7 @@ const RequestsOutScreen = (props) => {
       [
         { text: "cancel" },
         {
-          text: "Proceed",
+          text: "proceed",
           onPress: () => {
             addPatient();
           },

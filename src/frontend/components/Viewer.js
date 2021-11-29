@@ -25,7 +25,7 @@ const Viewer = (props) => {
       [
         { text: "cancel" },
         {
-          text: "Proceed",
+          text: "proceed",
           onPress: () => {
             blockHandler();
           },
