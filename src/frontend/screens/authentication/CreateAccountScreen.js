@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import SelectDropdown from "react-native-select-dropdown";
@@ -52,6 +53,8 @@ const CreateAccountScreen = (props) => {
   const [codeSent, setCodeSent] = useState(initialState.codeSent);
   const [valid, setValid] = useState(initialState.valid);
   const [complete, setComplete] = useState(initialState.complete);
+
+  const [loading, setLoading] = useState(false);
 
   const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   const birthdayRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
@@ -211,14 +214,63 @@ const CreateAccountScreen = (props) => {
     });
 
     if (res.data.verified) {
+      try {
+        if (accountType === "Patient") {
+          setLoading(true);
+          var res1 = await axios.post(localHost + "/register", {
+            email: email,
+            password: password,
+            usertype: false,
+            name: name,
+            birthday: birthday,
+            gender: gender,
+            institution: "",
+          });
+        } else {
+          setLoading(true);
+          var res1 = await axios.post(localHost + "/register", {
+            email: email,
+            password: password,
+            usertype: true,
+            name: name,
+            birthday: "",
+            gender: "",
+            institution: institute,
+          });
+        }
+        setLoading(false);
+
+        if (!res1.data.success) {
+          Alert.alert("Error", "Registration failed", [{ text: "cancel" }]);
+        }
+      } catch (err) {
+        Alert.alert("Error", "Something went Wrong", [{ text: "cancel" }]);
+      }
       props.navigation.navigate({ routeName: "Success" });
     } else {
+      setLoading(false);
       Alert.alert(
         "Incorrect veriification code",
         "Wrong 6-digit verification code",
         [{ text: "cancel" }]
       );
     }
+  };
+
+  const registerWrapper = async () => {
+    Alert.alert(
+      "Alert",
+      "This operation might take over 15 seconds. Are you sure to proceed?",
+      [
+        { text: "cancel" },
+        {
+          text: "proceed",
+          onPress: () => {
+            register();
+          },
+        },
+      ]
+    );
   };
 
   useEffect(() => {
@@ -361,6 +413,17 @@ const CreateAccountScreen = (props) => {
     );
   }
 
+  let create = <Text style={styles.button_register}>REGISTER</Text>;
+  if (loading) {
+    create = (
+      <ActivityIndicator
+        size="small"
+        color={Colors.studyFindLightGreen}
+        style={styles.loading}
+      />
+    );
+  }
+
   return (
     <KeyboardAvoidingView style={{ flex: 1 }}>
       <TouchableWithoutFeedback
@@ -438,9 +501,9 @@ const CreateAccountScreen = (props) => {
               <View style={styles.register_wrapper}>
                 <TouchableOpacity
                   style={complete ? styles.button : styles.button_inactive}
-                  onPress={register}
+                  onPress={registerWrapper}
                 >
-                  <Text style={styles.button_register}>CREATE</Text>
+                  {create}
                 </TouchableOpacity>
                 <View style={styles.login}>
                   <Text>Already have an account? </Text>
@@ -589,6 +652,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     alignContent: "center",
+  },
+
+  loading: {
+    alignSelf: "center",
+    marginTop: 10,
   },
 });
 

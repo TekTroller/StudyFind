@@ -27,7 +27,7 @@ const Request = (props) => {
       [
         { text: "cancel" },
         {
-          text: "Proceed",
+          text: "proceed",
           onPress: () => {
             acceptHandler();
           },
@@ -43,7 +43,7 @@ const Request = (props) => {
       [
         { text: "cancel" },
         {
-          text: "Proceed",
+          text: "proceed",
           onPress: () => {
             rejectHandler();
           },
