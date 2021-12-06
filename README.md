@@ -10,5 +10,5 @@ How to run the app:
 4. Open the virtual device created in step #2 above.
 5. On terminal, go to /src/frontend/ directory, run `npm install --save` and then run `npm run android`. This will take a while on the first time.
 
-Demo Available at:
+Demo available at:
 https://youtu.be/JI_h242BFbI
