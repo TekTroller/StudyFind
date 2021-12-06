@@ -65,8 +65,8 @@ const ImgPicker = (props) => {
     const image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
     setPickedImage(image.uri);

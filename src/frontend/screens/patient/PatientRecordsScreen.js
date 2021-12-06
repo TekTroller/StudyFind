@@ -30,6 +30,7 @@ const PatientRecordsScreen = (props) => {
   const [deleting, setDeleting] = useState(false);
 
   let patientProfile = authenticationInfo.patientProfile;
+  //console.log(authenticationInfo.accountAddress);
   //console.log("patientProfile: ", patientProfile);
   //console.log("address: ", authenticationInfo.accountAddress);
   //console.log("records: ", patientRecordsInfo.patientRecords);
@@ -65,12 +66,8 @@ const PatientRecordsScreen = (props) => {
         }
         dispatch(authActions.setAccountRetrieved(true));
       } catch (err) {
-        Alert.alert(
-      "Error",
-      "Something went wrong.",
-      [
-        { text: "Cancel" }]
-      )
+        Alert.alert("Error", "Something went wrong.", [{ text: "Cancel" }]);
+      }
     }
   };
 
@@ -191,10 +188,8 @@ const PatientRecordsScreen = (props) => {
   );
 };
 
-PatientRecordsScreen.navigationOptions = () => {
-  return {
-    headerTitle: "Records",
-  };
+PatientRecordsScreen.navigationOptions = {
+  headerTitle: "Records",
 };
 
 const styles = StyleSheet.create({

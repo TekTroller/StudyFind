@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   body: {
-    height: 635,
+    height: 641,
     width: "100%",
   },
   icon: {
