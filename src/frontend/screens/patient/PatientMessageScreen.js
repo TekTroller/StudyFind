@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   body: {
     width: "100%",
-    height: 635,
+    height: 641,
   },
   messages_wrapper: {
     width: "100%",

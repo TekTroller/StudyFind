@@ -142,11 +142,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "white",
+    //backgroundColor: "red",
   },
   body: {
     width: "100%",
-    height: 635,
+    height: 641,
   },
   icon: {
     marginTop: 20,
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+
   viewers_wrapper: {
     width: 300,
     height: 50,
@@ -178,8 +179,7 @@ const styles = StyleSheet.create({
     //elevation: 2,
   },
   bottom_bar: {
-    top: 10,
-    //alignSelf: "flex-end",
+    alignSelf: "flex-end",
   },
 });
 
