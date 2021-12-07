@@ -36,6 +36,7 @@ A mobile-based decentralized application (DAPP) used to store medical records. B
 ### Known Bugs and Defects
 - When creating an account, a user can request resending the verification code immediately after requesting a previous verification code. However, they should be given around 60 seconds.
 - There is no restriction on the length of a user’s name, so styling will be compromised if the user’s name or a professional’s institute name is too long.
+- Cannot delete multiple records at the same time.
 
 ## Requirements
 MacOS or Windows 7 and higher, with [Android Studio](https://developer.android.com/studio/install) and Android emulator installed.
